@@ -253,6 +253,7 @@ public class NotificationPanelController {
     @FXML
     public void back() throws Exception {
         mainPanelController.refresh();
+        mainPanelController.clear();
         emptyPanelController.setScreen(mainPanel);
     }
 

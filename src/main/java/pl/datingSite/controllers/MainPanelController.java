@@ -711,6 +711,33 @@ public class MainPanelController {
 
     }
 
+    private void viewProfile(User user) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("AccountInfoPanel.fxml"));
+            AnchorPane pane = null;
+            try {
+                pane = loader.load();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            AccountInfoPanelController accountInfoPanelController = loader.getController();
+            accountInfoPanelController.setMainPanel(mainPanel);
+            accountInfoPanelController.setLoggedUser(this.user);
+            accountInfoPanelController.setUserToView(user);
+            accountInfoPanelController.setEmptyPanelController(emptyPanelController);
+            accountInfoPanelController.setLoginPanel(loginPanel);
+            accountInfoPanelController.setLoginPanelController(loginPanelController);
+            accountInfoPanelController.setMainPanelController(this);
+            accountInfoPanelController.setPassword(password);
+            accountInfoPanelController.setStage(stage);
+            accountInfoPanelController.refresh();
+            emptyPanelController.setScreen(pane);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public VBox createPage(int pageIndex) {
 
 
@@ -761,6 +788,10 @@ public class MainPanelController {
 
                 element.getChildren().addAll(imageView, vBox);
                 box.getChildren().add(element);
+                int userId = box.getChildren().size() + pageIndex * ITEM_PER_PAGE - 1;
+                element.setOnMouseClicked(event -> {
+                    viewProfile(users.get(userId));
+                });
             }
 
         }
