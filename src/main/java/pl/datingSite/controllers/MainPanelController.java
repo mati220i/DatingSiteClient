@@ -675,8 +675,6 @@ public class MainPanelController {
             searchHelper.setReligions(religions);
         }
 
-        System.out.println(searchHelper);
-
         ProgressIndicator indicator = new ProgressIndicator(-1);
         resultVBox.getChildren().add(0, indicator);
 

@@ -60,6 +60,7 @@ public class AccountInfoPanelController {
 
     private final String countNotificationUrl = "http://localhost:8090/notification/count?";
     private final String newWaveNotificationUrl = "http://localhost:8090/notification/newWave?";
+    private final String newKissNotificationUrl = "http://localhost:8090/notification/newKiss?";
 
     @FXML
     public void initialize() {
@@ -327,8 +328,25 @@ public class AccountInfoPanelController {
     }
 
     @FXML
-    public void sendKiss() {
+    public void sendKiss() throws Exception {
+        DefaultHttpClient client = new DefaultHttpClient();
+        Credentials credentials = new UsernamePasswordCredentials(loggedUser.getUsername(), password);
+        client.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
+        ApacheHttpClient4Executor executor = new ApacheHttpClient4Executor(client);
 
+        ClientRequest clientRequest = new ClientRequest(newKissNotificationUrl + "from=" + loggedUser.getUsername() + "&to=" + userToView.getUsername(), executor);
+        ClientResponse clientResponse = clientRequest.put();
+        if(clientResponse.getStatus() == 200) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Dating Site");
+            alert.setHeaderText(null);
+            alert.setContentText("Całos został wysłany użytkownikowi " + userToView.getName());
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if((result.get() == ButtonType.OK)){
+
+            }
+        }
     }
 
     @FXML

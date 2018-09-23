@@ -8,10 +8,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.apache.http.auth.AuthScope;
@@ -25,6 +28,7 @@ import pl.datingSite.model.Notification;
 import pl.datingSite.model.User;
 
 import javax.ws.rs.core.MediaType;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -54,7 +58,7 @@ public class NotificationPanelController {
     @FXML
     private TableColumn topicColumn, dateColumn;
     @FXML
-    private TextArea content;
+    private TextFlow content;
     @FXML
     private Separator line, line2;
 
@@ -62,6 +66,7 @@ public class NotificationPanelController {
     private final String getNotificationsUrl = "http://localhost:8090/notification/getAll?";
     private final String readNotificationsUrl = "http://localhost:8090/notification/read?";
     private final String deleteNotificationsUrl = "http://localhost:8090/notification/delete";
+    private final String getUserUrl = "http://localhost:8090/user/getUser?";
 
     private Set<Notification> notificationsList;
 
@@ -77,6 +82,12 @@ public class NotificationPanelController {
 
     public void refresh() throws Exception {
         nameAndSurname.setText(user.getName() + " " + user.getSurname());
+
+        if(user.getAvatar() != null) {
+            avatar.setImage(new Image(new ByteArrayInputStream(user.getAvatar())));
+        } else {
+            avatar.setImage(new Image("images/noFoto.png"));
+        }
 
 
         getNotification();
@@ -168,8 +179,27 @@ public class NotificationPanelController {
 
             topic.setText(notification.getTopic());
             date.setText(notification.getReceiveDate());
-            content.setText(notification.getContent());
 
+            if(notification.getTopic().split(" ")[0].equals("Użytkownik")) {
+                String[] data = notification.getContent().split("'");
+
+                Hyperlink linkToProfile = new Hyperlink(String.valueOf(data[1]));
+
+                User userToView = getUserToView(data[1]);
+
+                linkToProfile.setOnAction(event -> {
+                    viewProfile(userToView);
+                });
+
+                Text text = new Text( data[0] + " (");
+                Text tex2 = new Text(") " + data[2]);
+                content.getChildren().clear();
+                content.getChildren().addAll(text, linkToProfile, tex2);
+            } else {
+                Text text = new Text(notification.getContent());
+                content.getChildren().clear();
+                content.getChildren().addAll(text);
+            }
             if(!notification.isReaded()) {
                 DefaultHttpClient client = new DefaultHttpClient();
                 Credentials credentials = new UsernamePasswordCredentials(user.getUsername(), password);
@@ -183,6 +213,43 @@ public class NotificationPanelController {
             }
         } else {
             displayAlert("Nic nie zostało wybrane!", Alert.AlertType.WARNING);
+        }
+    }
+
+    private User getUserToView(String username) throws Exception {
+        DefaultHttpClient client = new DefaultHttpClient();
+        Credentials credentials = new UsernamePasswordCredentials(user.getUsername(), password);
+        client.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
+        ApacheHttpClient4Executor executor = new ApacheHttpClient4Executor(client);
+
+        ClientRequest clientRequest = new ClientRequest(getUserUrl + "login=" + username, executor);
+        return (User) clientRequest.post().getEntity(User.class);
+    }
+
+    private void viewProfile(User user) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("AccountInfoPanel.fxml"));
+            AnchorPane pane = null;
+            try {
+                pane = loader.load();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            AccountInfoPanelController accountInfoPanelController = loader.getController();
+            accountInfoPanelController.setMainPanel(mainPanel);
+            accountInfoPanelController.setLoggedUser(this.user);
+            accountInfoPanelController.setUserToView(user);
+            accountInfoPanelController.setEmptyPanelController(emptyPanelController);
+            accountInfoPanelController.setLoginPanel(loginPanel);
+            accountInfoPanelController.setLoginPanelController(loginPanelController);
+            accountInfoPanelController.setMainPanelController(mainPanelController);
+            accountInfoPanelController.setPassword(password);
+            accountInfoPanelController.setStage(stage);
+            accountInfoPanelController.refresh();
+            emptyPanelController.setScreen(pane);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
