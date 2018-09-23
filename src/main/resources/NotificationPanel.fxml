@@ -196,12 +196,12 @@
                         <Separator fx:id="line2" prefWidth="200.0" />
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="50.0">
                            <children>
-                              <Button fx:id="delete" mnemonicParsing="false" onAction="#delete" text="Usuń">
+                              <Button fx:id="delete" mnemonicParsing="false" onAction="#delete" style="-fx-background-radius: 40;" text="Usuń">
                                  <font>
                                     <Font size="20.0" />
                                  </font>
                               </Button>
-                              <Button mnemonicParsing="false" onAction="#back" text="Wróć">
+                              <Button mnemonicParsing="false" onAction="#back" style="-fx-background-radius: 40;" text="Wróć">
                                  <font>
                                     <Font size="20.0" />
                                  </font>

@@ -379,8 +379,26 @@ public class AccountInfoPanelController {
     }
 
     @FXML
-    public void friends() {
+    public void friends() throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("FriendsPanel.fxml"));
+        AnchorPane pane = null;
+        try {
+            pane = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+        FriendsPanelController friendsPanelController = loader.getController();
+        friendsPanelController.setMainPanel(mainPanel);
+        friendsPanelController.setUser(loggedUser);
+        friendsPanelController.setEmptyPanelController(emptyPanelController);
+        friendsPanelController.setLoginPanel(loginPanel);
+        friendsPanelController.setLoginPanelController(loginPanelController);
+        friendsPanelController.setMainPanelController(mainPanelController);
+        friendsPanelController.setPassword(password);
+        friendsPanelController.setStage(stage);
+        friendsPanelController.refresh();
+        emptyPanelController.setScreen(pane);
     }
 
     @FXML
