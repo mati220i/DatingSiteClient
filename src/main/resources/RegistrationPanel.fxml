@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="720.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.datingSite.controllers.RegistrationPanelController">
+   <children>
+      <VBox prefHeight="720.0" prefWidth="1200.0" spacing="20.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="720.0" spacing="50.0">
+               <children>
+                  <ImageView fitHeight="80.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/logo.jpg" />
+                     </image>
+                  </ImageView>
+                  <Label text="Rejestracja konta" textFill="#0244a1">
+                     <font>
+                        <Font name="Comic Sans MS" size="40.0" />
+                     </font>
+                  </Label>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <VBox.margin>
+                  <Insets bottom="-1.0" />
+               </VBox.margin>
+               <padding>
+                  <Insets left="20.0" />
+               </padding>
+            </HBox>
+            <GridPane vgap="30.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+                     <children>
+                        <Label text="Login" textFill="#730697">
+                           <font>
+                              <Font name="Comic Sans MS" size="30.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="login" onKeyTyped="#typeLogin" promptText="Podaj Login" />
+                        <Label fx:id="loginError" text="Login zajęty" textFill="RED">
+                           <font>
+                              <Font name="Comic Sans MS" size="25.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.columnIndex="1">
+                     <children>
+                        <Label text="Hasło" textFill="#730697">
+                           <font>
+                              <Font name="Comic Sans MS" size="30.0" />
+                           </font>
+                        </Label>
+                        <PasswordField fx:id="password" onKeyTyped="#typePassword" promptText="Podaj Hasło" />
+                        <Label fx:id="passwordError" text="Podaj hasło" textFill="RED">
+                           <font>
+                              <Font name="Comic Sans MS" size="25.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.rowIndex="1">
+                     <children>
+                        <Label text="Imię" textFill="#730697">
+                           <font>
+                              <Font name="Comic Sans MS" size="30.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="name" onKeyTyped="#typeName" promptText="Podaj Imię" />
+                        <Label fx:id="nameError" text="Podaj imię" textFill="RED">
+                           <font>
+                              <Font name="Comic Sans MS" size="25.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <children>
+                        <Label text="Nazwisko" textFill="#730697">
+                           <font>
+                              <Font name="Comic Sans MS" size="30.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="surname" onKeyTyped="#typeSurname" promptText="Podaj Nazwisko" />
+                        <Label fx:id="surnameError" text="Podaj nazwisko" textFill="RED">
+                           <font>
+                              <Font name="Comic Sans MS" size="25.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.rowIndex="2">
+                     <children>
+                        <Label text="Email" textFill="#730697">
+                           <font>
+                              <Font name="Comic Sans MS" size="30.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="email" onKeyTyped="#typeEmail" promptText="Podaj Email" />
+                        <Label fx:id="emailError" text="Nieprawidłowy format" textFill="RED">
+                           <font>
+                              <Font name="Comic Sans MS" size="25.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <children>
+                        <Label text="Miasto" textFill="#730697">
+                           <font>
+                              <Font name="Comic Sans MS" size="30.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="city" editable="true" onKeyReleased="#typeCity" onMouseClicked="#clickCity" prefWidth="250.0" promptText="Podaj miasto" />
+                        <Label fx:id="cityError" text="Wybierz miasto" textFill="RED">
+                           <font>
+                              <Font name="Comic Sans MS" size="25.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.rowIndex="3">
+                     <children>
+                        <Label text="Wiek" textFill="#730697">
+                           <font>
+                              <Font name="Comic Sans MS" size="30.0" />
+                           </font>
+                        </Label>
+                        <DatePicker fx:id="age" onMouseClicked="#typeAge" promptText="Wybierz wiek" />
+                        <Label fx:id="ageError" text="Zakres od 18 do 90" textFill="RED">
+                           <font>
+                              <Font name="Comic Sans MS" size="25.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <children>
+                        <Label text="Płeć" textFill="#730697">
+                           <font>
+                              <Font name="Comic Sans MS" size="30.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="sex" onMouseClicked="#typeSex" prefWidth="150.0" promptText="Podaj płeć" />
+                        <Label fx:id="sexError" text="Wybierz płeć" textFill="RED">
+                           <font>
+                              <Font name="Comic Sans MS" size="25.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets top="30.0" />
+               </padding>
+            </GridPane>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="20.0">
+               <children>
+                  <Label text="Kod aktywacyjny" textFill="#0cb24c">
+                     <font>
+                        <Font name="Comic Sans MS" size="30.0" />
+                     </font>
+                  </Label>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+                     <children>
+                        <Button fx:id="sendCode" mnemonicParsing="false" onAction="#sendCode" text="Wyślij kod na email" />
+                        <TextField fx:id="activationCode" maxHeight="50.0" maxWidth="700.0" minHeight="50.0" minWidth="700.0" onKeyTyped="#typeActivationCode" prefHeight="50.0" prefWidth="700.0" promptText="Podaj kod z wiadomości email" />
+                     </children>
+                  </HBox>
+                  <Label fx:id="activationCodeError" text="Błędny kod" textFill="RED">
+                     <font>
+                        <Font name="Comic Sans MS" size="25.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="40.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#cancel" text="Anuluj" />
+                  <Button fx:id="register" mnemonicParsing="false" onAction="#register" text="Zarejestruj konto" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

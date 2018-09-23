@@ -1,0 +1,5 @@
+package pl.datingSite.enums;
+
+public enum Religion {
+    CHRISTIANITY, ISLAM, ATHEIST, HINDUISM, BUDDHISM, JUDAISM, ORTHODOXY, PROTESTANTISM, JEHOVAH
+}

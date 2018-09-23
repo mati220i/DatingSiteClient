@@ -1,0 +1,656 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Pagination?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.RadialGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import org.controlsfx.control.CheckComboBox?>
+
+<AnchorPane prefHeight="720.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.datingSite.controllers.MainPanelController">
+   <children>
+      <VBox alignment="TOP_CENTER" prefHeight="720.0" prefWidth="1200.0">
+         <children>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <HBox prefHeight="100.0" prefWidth="450.0">
+                     <children>
+                        <ImageView fitHeight="150.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@images/logo.jpg" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="500.0" spacing="20.0">
+                     <children>
+                        <ImageView fx:id="avatar" fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@images/woman.jpg" />
+                           </image></ImageView>
+                        <Label fx:id="nameAndSurname" text="Imię Nazwisko">
+                           <font>
+                              <Font name="Comic Sans MS" size="20.0" />
+                           </font></Label>
+                        <Button fx:id="settings" mnemonicParsing="false" onAction="#settings" style="-fx-background-radius: 30;">
+                           <graphic>
+                              <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@images/settings.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="logout" layoutX="323.0" layoutY="39.0" mnemonicParsing="false" onAction="#logout" style="-fx-background-radius: 30;">
+                           <graphic>
+                              <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@images/logout.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="250.0" spacing="20.0">
+                     <children>
+                         <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="${friends.prefHeight}" prefWidth="${friends.prefWidth}">
+                             <children>
+                                 <Button fx:id="friends" layoutY="8.0" mnemonicParsing="false" onAction="#friends" style="-fx-background-radius: 30;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <graphic>
+                                    <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@images/friends.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                                 <StackPane fx:id="friendsCounter" layoutX="57.0" layoutY="-13.0" AnchorPane.rightAnchor="-10" AnchorPane.topAnchor="-10">
+                                     <children>
+                                         <Circle radius="10.0" stroke="BLACK" strokeType="INSIDE">
+                                             <fill>
+                                                 <RadialGradient centerX="0.5" centerY="0.5" radius="0.8164556962025317">
+                                                     <stops>
+                                                         <Stop color="#ff361beb" />
+                                                         <Stop color="WHITE" offset="1.0" />
+                                                     </stops>
+                                                 </RadialGradient>
+                                             </fill>
+                                         </Circle>
+                                         <Label fx:id="friendsCount" text="0" />
+                                     </children>
+                                 </StackPane>
+                             </children>
+                         </AnchorPane>
+                        <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="${notifications.prefHeight}" prefWidth="${notifications.prefWidth}">
+                           <children>
+                              <Button fx:id="notifications" layoutY="8.0" mnemonicParsing="false" onAction="#notifications" style="-fx-background-radius: 30;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <graphic>
+                                    <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@images/notifications.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <StackPane fx:id="notificationsCounter" layoutX="57.0" layoutY="-13.0" AnchorPane.rightAnchor="-10" AnchorPane.topAnchor="-10">
+                                 <children>
+                                    <Circle radius="10.0" stroke="BLACK" strokeType="INSIDE">
+                                       <fill>
+                                          <RadialGradient centerX="0.5" centerY="0.5" radius="0.8164556962025317">
+                                             <stops>
+                                                <Stop color="#ff361beb" />
+                                                <Stop color="WHITE" offset="1.0" />
+                                             </stops>
+                                          </RadialGradient>
+                                       </fill>
+                                    </Circle>
+                                    <Label fx:id="notificationCount" text="0" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="${messages.prefHeight}" prefWidth="${messages.prefWidth}">
+                           <children>
+                              <Button fx:id="messages" layoutY="8.0" mnemonicParsing="false" onAction="#messages" style="-fx-background-radius: 30;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <graphic>
+                                    <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@images/messages.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <StackPane fx:id="messagesCounter" layoutX="57.0" layoutY="-13.0" AnchorPane.rightAnchor="-10" AnchorPane.topAnchor="-10">
+                                 <children>
+                                    <Circle radius="10.0" stroke="BLACK" strokeType="INSIDE">
+                                       <fill>
+                                          <RadialGradient centerX="0.5" centerY="0.5" radius="0.8164556962025317">
+                                             <stops>
+                                                <Stop color="#ff361beb" />
+                                                <Stop color="WHITE" offset="1.0" />
+                                             </stops>
+                                          </RadialGradient>
+                                       </fill>
+                                    </Circle>
+                                    <Label fx:id="messageCount" text="0" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
+            <HBox prefHeight="620.0" prefWidth="200.0">
+               <children>
+                  <TabPane prefWidth="1200.0" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                        <Tab text="Inteligentne dobieranie">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                          </content>
+                        </Tab>
+                      <Tab text="Szybkie wyszukiwanie">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <HBox alignment="CENTER" prefHeight="580.0" prefWidth="1200.0">
+                                       <children>
+                                          <VBox alignment="TOP_CENTER" prefHeight="580.0" prefWidth="400.0">
+                                             <children>
+                                                <VBox alignment="TOP_CENTER" prefHeight="500.0" prefWidth="400.0" spacing="10.0">
+                                                   <children>
+                                                      <Label text="Szukaj">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="18.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <ScrollPane prefHeight="460.0" prefWidth="400.0">
+                                                        <content>
+                                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="750.0" prefWidth="380.0">
+                                                               <children>
+                                                                  <VBox alignment="TOP_CENTER" prefHeight="750.0" prefWidth="380.0">
+                                                                     <children>
+                                                                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="20.0">
+                                                                           <children>
+                                                                              <Label text="Płeć">
+                                                                                 <font>
+                                                                                    <Font name="Comic Sans MS" size="16.0" />
+                                                                                 </font>
+                                                                              </Label>
+                                                                              <ComboBox fx:id="sex" prefWidth="200.0" />
+                                                                           </children>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="20.0">
+                                                                           <children>
+                                                                              <Label text="Wiek od">
+                                                                                 <font>
+                                                                                    <Font name="Comic Sans MS" size="16.0" />
+                                                                                 </font>
+                                                                              </Label>
+                                                                              <ComboBox fx:id="ageFromSearch" prefWidth="80.0" />
+                                                                              <Label text="do" />
+                                                                              <ComboBox fx:id="ageToSearch" prefWidth="80.0" />
+                                                                           </children>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="20.0">
+                                                                           <children>
+                                                                              <CheckBox fx:id="withAvatar" mnemonicParsing="false" text="Tylko ze zdjęciem">
+                                                                                 <font>
+                                                                                    <Font name="Comic Sans MS" size="16.0" />
+                                                                                 </font>
+                                                                              </CheckBox>
+                                                                              <CheckBox fx:id="real" mnemonicParsing="false" text="Tylko realne">
+                                                                                 <font>
+                                                                                    <Font name="Comic Sans MS" size="16.0" />
+                                                                                 </font>
+                                                                              </CheckBox>
+                                                                           </children>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER" prefHeight="150.0" prefWidth="200.0" spacing="20.0">
+                                                                           <children>
+                                                                              <VBox alignment="CENTER" prefHeight="200.0" prefWidth="380.0" spacing="10.0">
+                                                                                 <children>
+                                                                                    <Label text="Lokalizacja">
+                                                                                       <font>
+                                                                                          <Font name="Comic Sans MS" size="16.0" />
+                                                                                       </font>
+                                                                                    </Label>
+                                                                                    <ComboBox fx:id="locationFrom" editable="true" onKeyReleased="#typeLocation" prefWidth="350.0" />
+                                                                                    <HBox alignment="CENTER" prefHeight="59.0" prefWidth="200.0" spacing="10.0">
+                                                                                       <children>
+                                                                                          <Label text="Odległość">
+                                                                                             <font>
+                                                                                                <Font name="Comic Sans MS" size="16.0" />
+                                                                                             </font>
+                                                                                          </Label>
+                                                                                          <ComboBox fx:id="distanceFrom" prefWidth="100.0" />
+                                                                                          <Label text="km">
+                                                                                             <font>
+                                                                                                <Font name="Comic Sans MS" size="16.0" />
+                                                                                             </font>
+                                                                                          </Label>
+                                                                                       </children>
+                                                                                    </HBox>
+                                                                                 </children>
+                                                                              </VBox>
+                                                                           </children>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="20.0">
+                                                                           <children>
+                                                                              <Label text="Status cywilny">
+                                                                                 <font>
+                                                                                    <Font name="Comic Sans MS" size="16.0" />
+                                                                                 </font>
+                                                                              </Label>
+                                                                              <CheckComboBox fx:id="maritalStatus" prefWidth="220.0" />
+                                                                           </children>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="20.0">
+                                                                           <children>
+                                                                              <Label text="Figura">
+                                                                                 <font>
+                                                                                    <Font name="Comic Sans MS" size="16.0" />
+                                                                                 </font>
+                                                                              </Label>
+                                                                              <CheckComboBox fx:id="figure" prefWidth="220.0" />
+                                                                           </children>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="20.0">
+                                                                           <children>
+                                                                              <Label text="Wzrost od">
+                                                                                 <font>
+                                                                                    <Font name="Comic Sans MS" size="16.0" />
+                                                                                 </font>
+                                                                              </Label>
+                                                                              <ComboBox fx:id="heightFrom" prefWidth="80.0" />
+                                                                              <Label text="do">
+                                                                                 <font>
+                                                                                    <Font name="Comic Sans MS" size="16.0" />
+                                                                                 </font>
+                                                                              </Label>
+                                                                              <ComboBox fx:id="heightTo" prefWidth="80.0" />
+                                                                           </children>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="20.0">
+                                                                           <children>
+                                                                              <Label text="Kolor włosów">
+                                                                                 <font>
+                                                                                    <Font name="Comic Sans MS" size="16.0" />
+                                                                                 </font>
+                                                                              </Label>
+                                                                              <CheckComboBox fx:id="hairColor" prefWidth="220.0" />
+                                                                           </children>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="20.0">
+                                                                           <children>
+                                                                              <Label text="Palenie">
+                                                                                 <font>
+                                                                                    <Font name="Comic Sans MS" size="16.0" />
+                                                                                 </font>
+                                                                              </Label>
+                                                                              <CheckComboBox fx:id="smoking" prefWidth="220.0" />
+                                                                           </children>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="20.0">
+                                                                           <children>
+                                                                              <Label text="Alkohol">
+                                                                                 <font>
+                                                                                    <Font name="Comic Sans MS" size="16.0" />
+                                                                                 </font>
+                                                                              </Label>
+                                                                              <CheckComboBox fx:id="alcohol" prefWidth="220.0" />
+                                                                           </children>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="20.0">
+                                                                           <children>
+                                                                              <Label text="Dzieci">
+                                                                                 <font>
+                                                                                    <Font name="Comic Sans MS" size="16.0" />
+                                                                                 </font>
+                                                                              </Label>
+                                                                              <CheckComboBox fx:id="children" prefWidth="220.0" />
+                                                                           </children>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="20.0">
+                                                                           <children>
+                                                                              <Label text="Szukam">
+                                                                                 <font>
+                                                                                    <Font name="Comic Sans MS" size="16.0" />
+                                                                                 </font>
+                                                                              </Label>
+                                                                              <CheckComboBox fx:id="lookingFor" prefWidth="220.0" />
+                                                                           </children>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="20.0">
+                                                                           <children>
+                                                                              <Label text="Religia">
+                                                                                 <font>
+                                                                                    <Font name="Comic Sans MS" size="16.0" />
+                                                                                 </font>
+                                                                              </Label>
+                                                                              <CheckComboBox fx:id="religion" prefWidth="220.0" />
+                                                                           </children>
+                                                                        </HBox>
+                                                                     </children>
+                                                                  </VBox>
+                                                               </children>
+                                                            </AnchorPane>
+                                                        </content>
+                                                      </ScrollPane>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets top="10.0" />
+                                                   </padding>
+                                                </VBox>
+                                                <HBox alignment="CENTER" prefHeight="80.0" prefWidth="400.0" spacing="30.0">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#clear" style="-fx-background-radius: 50;" text="Wyczyść">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="20.0" />
+                                                         </font>
+                                                      </Button>
+                                                      <Button mnemonicParsing="false" onAction="#search" style="-fx-background-radius: 50;" text="Wyszukaj">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="20.0" />
+                                                         </font>
+                                                      </Button>
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </VBox>
+                                          <VBox prefHeight="580.0" prefWidth="800.0">
+                                             <children>
+                                                <ScrollPane prefHeight="800.0" prefWidth="800.0">
+                                                  <content>
+                                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="800.0" prefWidth="780.0">
+                                                         <children>
+                                                            <VBox fx:id="resultVBox" alignment="TOP_CENTER" prefHeight="800.0" prefWidth="780.0">
+                                                               <children>
+                                                                  <Pagination fx:id="pagination" prefHeight="580.0" prefWidth="780.0" />
+                                                               </children></VBox>
+                                                         </children>
+                                                      </AnchorPane>
+                                                  </content>
+                                                </ScrollPane>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                 </children></AnchorPane>
+                        </content>
+                      </Tab>
+                      <Tab text="Obliczanie odległości">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <VBox alignment="TOP_CENTER" prefHeight="580.0" prefWidth="1200.0" spacing="30.0">
+                                       <children>
+                                          <Label text="Obliczanie odległości">
+                                             <font>
+                                                <Font name="Comic Sans MS" size="30.0" />
+                                             </font></Label>
+                                          <Label text="Punkt początkowy">
+                                             <font>
+                                                <Font name="Comic Sans MS" size="18.0" />
+                                             </font></Label>
+                                          <ComboBox fx:id="from" editable="true" onKeyReleased="#typeFrom" prefWidth="400.0" />
+                                          <Label text="Punkt końcowy">
+                                             <font>
+                                                <Font name="Comic Sans MS" size="18.0" />
+                                             </font></Label>
+                                          <ComboBox fx:id="to" editable="true" onKeyReleased="#typeTo" prefWidth="400.0" />
+                                          <Label text="Odległość">
+                                             <font>
+                                                <Font name="Comic Sans MS" size="18.0" />
+                                             </font></Label>
+                                          <TextField fx:id="distance" editable="false" />
+                                          <Button mnemonicParsing="false" onAction="#calculate" text="Oblicz">
+                                             <font>
+                                                <Font name="Comic Sans MS" size="18.0" />
+                                             </font></Button>
+                                       </children>
+                                       <padding>
+                                          <Insets left="100.0" right="100.0" top="30.0" />
+                                       </padding>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </Tab>
+                        <Tab text="Edycja danych zdjęć">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <HBox alignment="CENTER" prefHeight="580.0" prefWidth="1200.0" spacing="40.0">
+                                       <children>
+                                          <ImageView fx:id="currentImage" fitHeight="400.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@images/noFoto.png" />
+                                             </image>
+                                          </ImageView>
+                                          <VBox alignment="CENTER" prefHeight="580.0" prefWidth="700.0" spacing="20.0">
+                                             <children>
+                                                <Label text="Ustaw dane zdjęcia">
+                                                   <font>
+                                                      <Font name="Comic Sans MS" size="28.0" />
+                                                   </font>
+                                                </Label>
+                                                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+                                                   <children>
+                                                      <RadioButton fx:id="woman" mnemonicParsing="false" text="Kobieta">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="15.0" />
+                                                         </font>
+                                                      </RadioButton>
+                                                      <RadioButton fx:id="man" mnemonicParsing="false" text="Mężczyzna">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="15.0" />
+                                                         </font>
+                                                      </RadioButton>
+                                                   </children>
+                                                </HBox>
+                                                <Label text="Sugerowany wiek">
+                                                   <font>
+                                                      <Font name="Comic Sans MS" size="15.0" />
+                                                   </font>
+                                                </Label>
+                                                <HBox alignment="TOP_CENTER" prefHeight="50.0" prefWidth="200.0" spacing="30.0">
+                                                   <children>
+                                                      <Label text="Od">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="15.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField fx:id="ageFrom" promptText="Wpisz wiek od" />
+                                                      <Label text="Do">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="15.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField fx:id="ageTo" promptText="Wpisz wiek do" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="30.0">
+                                                   <children>
+                                                      <Label text="Aktualna nazwa">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="15.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField fx:id="actualFilename" editable="false" prefWidth="350.0" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="30.0">
+                                                   <children>
+                                                      <Label text="Wygenerowana nazwa">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="15.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField fx:id="generatedFilename" editable="false" prefWidth="350.0" />
+                                                      <Button mnemonicParsing="false" onAction="#generate" text="Generuj">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="14.0" />
+                                                         </font>
+                                                      </Button>
+                                                   </children>
+                                                </HBox>
+                                                <ProgressBar fx:id="progress" prefWidth="400.0" progress="0.0" />
+                                                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#chooseFolder" text="Wybierz folder">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="21.0" />
+                                                         </font>
+                                                      </Button>
+                                                      <Button fx:id="prev" mnemonicParsing="false" onAction="#prev" text="&lt;&lt;">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="21.0" />
+                                                         </font>
+                                                      </Button>
+                                                      <Button fx:id="next" mnemonicParsing="false" onAction="#next" text="&gt;&gt;">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="21.0" />
+                                                         </font>
+                                                      </Button>
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </AnchorPane>
+                          </content>
+                        </Tab>
+                        <Tab text="Generowanie Bazy Dancyh">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <VBox alignment="CENTER" prefHeight="580.0" prefWidth="1200.0" spacing="10.0">
+                                       <children>
+                                          <VBox alignment="CENTER" prefHeight="380.0" prefWidth="1200.0" spacing="10.0">
+                                             <children>
+                                                <Label text="Dostosuj generowanie">
+                                                   <font>
+                                                      <Font name="Comic Sans MS" size="28.0" />
+                                                   </font>
+                                                </Label>
+                                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0" spacing="30.0">
+                                                   <children>
+                                                      <Label text="Ilość osób">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="18.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField fx:id="quantity" onKeyTyped="#typeQuantity" promptText="Wpisz ilość osób" />
+                                                      <Label fx:id="quantityError" text="Podaj ilość" textFill="RED">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="18.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="30.0">
+                                                   <children>
+                                                      <CheckBox fx:id="nearby" mnemonicParsing="false" onAction="#checkNearby" text="Osoby z pobliska">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="18.0" />
+                                                         </font>
+                                                      </CheckBox>
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0" spacing="30.0">
+                                                   <children>
+                                                      <Label text="Pobliskie Miasto">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="18.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <ComboBox fx:id="city" editable="true" onKeyReleased="#typeCity" prefWidth="400.0" promptText="Wybierz pobliskie miasto" />
+                                                      <Label fx:id="cityError" text="Wybierz miasto" textFill="RED">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="18.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#generateDb" text="Generuj">
+                                                         <font>
+                                                            <Font size="18.0" />
+                                                         </font>
+                                                      </Button>
+                                                      <Label fx:id="generateLabel" text="Generowanie danych" textFill="#059d29">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="21.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </VBox>
+                                          <Separator prefWidth="200.0" />
+                                          <VBox alignment="CENTER" prefHeight="200.0" prefWidth="1200.0" spacing="20.0">
+                                             <children>
+                                                <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="30.0">
+                                                   <children>
+                                                      <Label text="Pobliskie Miasto">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="18.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <ComboBox fx:id="city2" editable="true" onKeyReleased="#typeCity2" prefWidth="400.0" promptText="Wybierz pobliskie miasto" />
+                                                      <Label fx:id="cityError2" text="Wybierz miasto" textFill="RED">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="18.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </HBox>
+                                                <Button mnemonicParsing="false" onAction="#generateDb2" text="Generuj">
+                                                   <font>
+                                                      <Font size="18.0" />
+                                                   </font>
+                                                </Button>
+                                                <Label fx:id="generateLabel2" text="Generowanie danych" textFill="#059d29">
+                                                   <font>
+                                                      <Font name="Comic Sans MS" size="21.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                          </content>
+                        </Tab>
+                    </tabs>
+                  </TabPane>
+               </children></HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
