@@ -36,6 +36,7 @@ public class EmptyPanelController {
         panel.setEmptyPanelController(this);
         panel.setLoginPane(pane);
         panel.setStage(stage);
+        panel.refresh();
         setScreen(pane);
     }
 

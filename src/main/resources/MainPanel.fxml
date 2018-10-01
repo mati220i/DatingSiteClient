@@ -9,10 +9,10 @@
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -29,13 +29,13 @@
    <children>
       <VBox alignment="TOP_CENTER" prefHeight="720.0" prefWidth="1200.0">
          <children>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: #cce6ff;">
                <children>
                   <HBox prefHeight="100.0" prefWidth="450.0">
                      <children>
                         <ImageView fitHeight="150.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@images/logo.jpg" />
+                              <Image url="@images/logo.png" />
                            </image>
                         </ImageView>
                      </children>
@@ -175,7 +175,7 @@
                                  <children>
                                     <HBox alignment="CENTER" prefHeight="580.0" prefWidth="1200.0">
                                        <children>
-                                          <VBox alignment="TOP_CENTER" prefHeight="580.0" prefWidth="400.0">
+                                          <VBox alignment="TOP_CENTER" prefHeight="580.0" prefWidth="400.0" style="-fx-background-color: #cce6ff; -fx-background-radius: 30;">
                                              <children>
                                                 <VBox alignment="TOP_CENTER" prefHeight="500.0" prefWidth="400.0" spacing="10.0">
                                                    <children>
@@ -377,12 +377,15 @@
                                                    </children>
                                                 </HBox>
                                              </children>
+                                             <effect>
+                                                <DropShadow height="100.0" radius="49.5" width="100.0" />
+                                             </effect>
                                           </VBox>
-                                          <VBox prefHeight="580.0" prefWidth="800.0">
+                                          <VBox prefHeight="580.0" prefWidth="800.0" style="-fx-background-radius: 30;">
                                              <children>
-                                                <ScrollPane prefHeight="800.0" prefWidth="800.0">
+                                                <ScrollPane prefHeight="800.0" prefWidth="800.0" style="-fx-background-radius: 30;">
                                                   <content>
-                                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="800.0" prefWidth="780.0">
+                                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="800.0" prefWidth="780.0" style="-fx-background-radius: 30;">
                                                          <children>
                                                             <VBox fx:id="resultVBox" alignment="TOP_CENTER" prefHeight="800.0" prefWidth="780.0">
                                                                <children>
@@ -399,49 +402,61 @@
                                  </children></AnchorPane>
                         </content>
                       </Tab>
-                      <Tab text="Obliczanie odległości">
+                      <Tab fx:id="distanceCalc" text="Obliczanie odległości">
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                  <children>
-                                    <VBox alignment="TOP_CENTER" prefHeight="580.0" prefWidth="1200.0" spacing="30.0">
+                                    <HBox alignment="CENTER" fillHeight="false" prefHeight="580.0" prefWidth="1200.0">
                                        <children>
-                                          <Label text="Obliczanie odległości">
-                                             <font>
-                                                <Font name="Comic Sans MS" size="30.0" />
-                                             </font></Label>
-                                          <Label text="Punkt początkowy">
-                                             <font>
-                                                <Font name="Comic Sans MS" size="18.0" />
-                                             </font></Label>
-                                          <ComboBox fx:id="from" editable="true" onKeyReleased="#typeFrom" prefWidth="400.0" />
-                                          <Label text="Punkt końcowy">
-                                             <font>
-                                                <Font name="Comic Sans MS" size="18.0" />
-                                             </font></Label>
-                                          <ComboBox fx:id="to" editable="true" onKeyReleased="#typeTo" prefWidth="400.0" />
-                                          <Label text="Odległość">
-                                             <font>
-                                                <Font name="Comic Sans MS" size="18.0" />
-                                             </font></Label>
-                                          <TextField fx:id="distance" editable="false" />
-                                          <Button mnemonicParsing="false" onAction="#calculate" text="Oblicz">
-                                             <font>
-                                                <Font name="Comic Sans MS" size="18.0" />
-                                             </font></Button>
+                                          <VBox alignment="TOP_CENTER" fillWidth="false" prefHeight="500.0" prefWidth="500.0" spacing="30.0" style="-fx-background-color: #cce6ff; -fx-background-radius: 30;">
+                                             <children>
+                                                <Label text="Obliczanie odległości">
+                                                   <font>
+                                                      <Font name="Comic Sans MS" size="30.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label text="Punkt początkowy">
+                                                   <font>
+                                                      <Font name="Comic Sans MS" size="18.0" />
+                                                   </font>
+                                                </Label>
+                                                <ComboBox fx:id="from" editable="true" onKeyReleased="#typeFrom" prefWidth="400.0" />
+                                                <Label text="Punkt końcowy">
+                                                   <font>
+                                                      <Font name="Comic Sans MS" size="18.0" />
+                                                   </font>
+                                                </Label>
+                                                <ComboBox fx:id="to" editable="true" onKeyReleased="#typeTo" prefWidth="400.0" />
+                                                <Label text="Odległość">
+                                                   <font>
+                                                      <Font name="Comic Sans MS" size="18.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextField fx:id="distance" editable="false" prefWidth="400.0" />
+                                                <Button mnemonicParsing="false" onAction="#calculate" style="-fx-background-radius: 30;" text="Oblicz">
+                                                   <font>
+                                                      <Font name="Comic Sans MS" size="18.0" />
+                                                   </font>
+                                                </Button>
+                                             </children>
+                                             <padding>
+                                                <Insets top="15.0" />
+                                             </padding>
+                                             <effect>
+                                                <DropShadow height="100.0" radius="49.5" width="100.0" />
+                                             </effect>
+                                          </VBox>
                                        </children>
-                                       <padding>
-                                          <Insets left="100.0" right="100.0" top="30.0" />
-                                       </padding>
-                                    </VBox>
+                                    </HBox>
                                  </children>
                               </AnchorPane>
                         </content>
                       </Tab>
-                        <Tab text="Edycja danych zdjęć">
+                        <Tab fx:id="dataEditor" text="Edycja danych zdjęć">
                           <content>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                  <children>
-                                    <HBox alignment="CENTER" prefHeight="580.0" prefWidth="1200.0" spacing="40.0">
+                                    <HBox alignment="CENTER" prefHeight="580.0" prefWidth="1200.0" spacing="40.0" style="-fx-background-color: #cce6ff; -fx-background-radius: 30;">
                                        <children>
                                           <ImageView fx:id="currentImage" fitHeight="400.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -508,7 +523,7 @@
                                                          </font>
                                                       </Label>
                                                       <TextField fx:id="generatedFilename" editable="false" prefWidth="350.0" />
-                                                      <Button mnemonicParsing="false" onAction="#generate" text="Generuj">
+                                                      <Button mnemonicParsing="false" onAction="#generate" style="-fx-background-radius: 30;" text="Generuj">
                                                          <font>
                                                             <Font name="Comic Sans MS" size="14.0" />
                                                          </font>
@@ -518,17 +533,17 @@
                                                 <ProgressBar fx:id="progress" prefWidth="400.0" progress="0.0" />
                                                 <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
                                                    <children>
-                                                      <Button mnemonicParsing="false" onAction="#chooseFolder" text="Wybierz folder">
+                                                      <Button mnemonicParsing="false" onAction="#chooseFolder" style="-fx-background-radius: 30;" text="Wybierz folder">
                                                          <font>
                                                             <Font name="Comic Sans MS" size="21.0" />
                                                          </font>
                                                       </Button>
-                                                      <Button fx:id="prev" mnemonicParsing="false" onAction="#prev" text="&lt;&lt;">
+                                                      <Button fx:id="prev" mnemonicParsing="false" onAction="#prev" style="-fx-background-radius: 30;" text="&lt;&lt;">
                                                          <font>
                                                             <Font name="Comic Sans MS" size="21.0" />
                                                          </font>
                                                       </Button>
-                                                      <Button fx:id="next" mnemonicParsing="false" onAction="#next" text="&gt;&gt;">
+                                                      <Button fx:id="next" mnemonicParsing="false" onAction="#next" style="-fx-background-radius: 30;" text="&gt;&gt;">
                                                          <font>
                                                             <Font name="Comic Sans MS" size="21.0" />
                                                          </font>
@@ -543,13 +558,13 @@
                               </AnchorPane>
                           </content>
                         </Tab>
-                        <Tab text="Generowanie Bazy Dancyh">
+                        <Tab fx:id="databaseGen" text="Generowanie Bazy Dancyh">
                           <content>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                  <children>
-                                    <VBox alignment="CENTER" prefHeight="580.0" prefWidth="1200.0" spacing="10.0">
+                                    <VBox alignment="CENTER" fillWidth="false" prefHeight="580.0" prefWidth="1200.0" spacing="30.0">
                                        <children>
-                                          <VBox alignment="CENTER" prefHeight="380.0" prefWidth="1200.0" spacing="10.0">
+                                          <VBox alignment="CENTER" prefHeight="330.0" prefWidth="800.0" spacing="10.0" style="-fx-background-color: #cce6ff; -fx-background-radius: 30;">
                                              <children>
                                                 <Label text="Dostosuj generowanie">
                                                    <font>
@@ -595,7 +610,7 @@
                                                       </Label>
                                                    </children>
                                                 </HBox>
-                                                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+                                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0" spacing="30.0">
                                                    <children>
                                                       <Button mnemonicParsing="false" onAction="#generateDb" text="Generuj">
                                                          <font>
@@ -610,9 +625,14 @@
                                                    </children>
                                                 </HBox>
                                              </children>
+                                             <effect>
+                                                <DropShadow height="100.0" radius="49.5" width="100.0" />
+                                             </effect>
+                                             <VBox.margin>
+                                                <Insets top="10.0" />
+                                             </VBox.margin>
                                           </VBox>
-                                          <Separator prefWidth="200.0" />
-                                          <VBox alignment="CENTER" prefHeight="200.0" prefWidth="1200.0" spacing="20.0">
+                                          <VBox alignment="CENTER" prefHeight="180.0" prefWidth="800.0" spacing="10.0" style="-fx-background-color: #cce6ff; -fx-background-radius: 30;">
                                              <children>
                                                 <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="30.0">
                                                    <children>
@@ -640,6 +660,12 @@
                                                    </font>
                                                 </Label>
                                              </children>
+                                             <effect>
+                                                <DropShadow height="100.0" radius="49.5" width="100.0" />
+                                             </effect>
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" />
+                                             </VBox.margin>
                                           </VBox>
                                        </children>
                                     </VBox>

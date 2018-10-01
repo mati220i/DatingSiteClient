@@ -3,7 +3,8 @@ package pl.datingSite.controllers;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
@@ -13,19 +14,11 @@ import org.jboss.resteasy.client.ClientRequest;
 
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
-import org.jboss.resteasy.util.GenericType;
-import pl.datingSite.model.City;
 import pl.datingSite.model.User;
-import pl.datingSite.tools.CSVReader;
-import pl.datingSite.tools.DatabaseGenerator;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 public class LoginPanelController {
@@ -40,6 +33,8 @@ public class LoginPanelController {
     private TextField login;
     @FXML
     private PasswordField password;
+    @FXML
+    private VBox loginBox;
 
     private final String applicationTestUrl = "http://localhost:8090/test";
     private final String getUserUrl = "http://localhost:8090/user/getUser?";
@@ -57,6 +52,7 @@ public class LoginPanelController {
         } catch (ConnectException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Dating Site");
+            ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
             alert.setHeaderText(null);
             alert.setContentText("Brak połączenia z serwerem!");
 
@@ -67,34 +63,15 @@ public class LoginPanelController {
         }
     }
 
-    private User test() throws Exception {
-        ClientRequest clientRequest = new ClientRequest(getCitiesUrl);
-        List<City> cities = (List<City>)clientRequest.get().getEntity(new GenericType<List<City>>() {});
-        City city = getCity("Kielce").get(0);
-
-//        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-//
-//        File female = new File(classloader.getResource("images/avatars/woman").toURI());
-//        File male = new File(classloader.getResource("images/avatars/man").toURI());
-
-//        List<File> females = new ArrayList<>(Arrays.asList(female.listFiles()));
-//        List<File> males = new ArrayList<>(Arrays.asList(male.listFiles()));
-
-        DatabaseGenerator generator = new DatabaseGenerator(cities);
-        generator.generatePrepareData(city);
-        return null;
-// return generator.generate(4, true, city);
-    }
-
-    private List<City> getCity(String name) throws Exception {
-        ClientRequest clientRequest = new ClientRequest(getCityByNameUrl + "name=" + name);
-        return (List<City>)clientRequest.get().getEntity(new GenericType<List<City>>() {});
+    public void refresh() {
+        Random generator = new Random();
+        int val = generator.nextInt(16) + 1;
+        String path = "images/background/background" + val + ".jpg";
+        loginPane.setStyle("-fx-background-image: url('" + path + "'); -fx-background-size: 1200 720; -fx-background-size: cover");
     }
 
     @FXML
     public void login() throws Exception {
-        //test();
-
         DefaultHttpClient client = new DefaultHttpClient();
         Credentials credentials = new UsernamePasswordCredentials(login.getText(), password.getText());
         client.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
@@ -147,6 +124,8 @@ public class LoginPanelController {
         registrationPanelController.setLoginPane(loginPane);
         registrationPanelController.setEmptyPanelController(emptyPanelController);
         registrationPanelController.setLoginPanelController(this);
+        registrationPanelController.setRegistrationPanel(pane);
+        registrationPanelController.refresh();
         emptyPanelController.setScreen(pane);
     }
 

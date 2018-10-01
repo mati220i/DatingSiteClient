@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -13,56 +15,73 @@
 
 <AnchorPane prefHeight="720.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.datingSite.controllers.LoginPanelController">
    <children>
-      <VBox alignment="TOP_CENTER" prefHeight="720.0" prefWidth="1200.0" spacing="20.0">
+      <VBox alignment="TOP_CENTER" fillWidth="false" prefHeight="720.0" prefWidth="1200.0" spacing="20.0">
          <children>
             <ImageView fitHeight="200.0" fitWidth="1200.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@images/logo.jpg" />
+                  <Image url="@images/logo.png" />
                </image>
             </ImageView>
-            <Label text="Zaloguj się do serwisu" textFill="#a10cb5">
-               <font>
-                  <Font name="Comic Sans MS" size="50.0" />
-               </font>
-            </Label>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="50.0">
+            <HBox alignment="BOTTOM_RIGHT" fillHeight="false" prefHeight="580.0" prefWidth="1200.0" spacing="20.0">
                <children>
-                  <Label text="Login">
-                     <font>
-                        <Font name="Comic Sans MS" size="40.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="login" onKeyTyped="#typeData" prefHeight="40.0" prefWidth="300.0" promptText="Podaj login" />
+                  <VBox fx:id="loginBox" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="400.0" spacing="15.0" style="-fx-background-radius: 30; -fx-background-color: #cce6ff;">
+                     <children>
+                        <Label text="Zaloguj się do serwisu" textFill="#a10cb5">
+                           <font>
+                              <Font name="Comic Sans MS" size="20.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER" prefHeight="50.0" spacing="10.0">
+                           <children>
+                              <Label text="Login">
+                                 <font>
+                                    <Font name="Comic Sans MS" size="20.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="login" onKeyTyped="#typeData" prefHeight="25.0" prefWidth="250.0" promptText="Podaj login" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="10.0">
+                           <children>
+                              <Label text="Hasło">
+                                 <font>
+                                    <Font name="Comic Sans MS" size="20.0" />
+                                 </font>
+                              </Label>
+                              <PasswordField fx:id="password" onKeyTyped="#typeData" prefHeight="25.0" prefWidth="250.0" promptText="Podaj hasło" />
+                           </children>
+                        </HBox>
+                        <Label fx:id="errorLabel" text="Nieprawidłowy login lub hasło" textFill="RED">
+                           <font>
+                              <Font name="Comic Sans MS" size="20.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="10.0">
+                           <children>
+                              <Button defaultButton="true" mnemonicParsing="false" onAction="#login" style="-fx-background-radius: 40;" text="Zaloguj się">
+                                 <font>
+                                    <Font name="Comic Sans MS" size="20.0" />
+                                 </font>
+                              </Button>
+                              <Button mnemonicParsing="false" onAction="#register" style="-fx-background-radius: 40;" text="Zarejestruj się">
+                                 <font>
+                                    <Font name="Comic Sans MS" size="20.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                     <effect>
+                        <DropShadow height="100.0" radius="49.5" width="100.0" />
+                     </effect>
+                  </VBox>
                </children>
-            </HBox>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="50.0">
-               <children>
-                  <Label text="Hasło">
-                     <font>
-                        <Font name="Comic Sans MS" size="40.0" />
-                     </font>
-                  </Label>
-                  <PasswordField fx:id="password" onKeyTyped="#typeData" prefHeight="40.0" prefWidth="300.0" promptText="Podaj hasło" />
-               </children>
-            </HBox>
-            <Label fx:id="errorLabel" text="Nieprawidłowy login lub hasło" textFill="RED">
-               <font>
-                  <Font name="Comic Sans MS" size="30.0" />
-               </font>
-            </Label>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="40.0">
-               <children>
-                  <Button defaultButton="true" mnemonicParsing="false" onAction="#login" style="-fx-background-radius: 40;" text="Zaloguj się">
-                     <font>
-                        <Font name="Comic Sans MS" size="31.0" />
-                     </font>
-                  </Button>
-                  <Button mnemonicParsing="false" onAction="#register" style="-fx-background-radius: 40;" text="Zarejestruj się">
-                     <font>
-                        <Font name="Comic Sans MS" size="31.0" />
-                     </font>
-                  </Button>
-               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
             </HBox>
          </children>
       </VBox>

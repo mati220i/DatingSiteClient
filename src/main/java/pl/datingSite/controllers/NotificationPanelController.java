@@ -1,7 +1,5 @@
 package pl.datingSite.controllers;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -12,11 +10,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -26,24 +22,27 @@ import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.jboss.resteasy.util.GenericType;
 import pl.datingSite.model.Notification;
 import pl.datingSite.model.User;
+import pl.datingSite.model.messages.Conversation;
+import pl.datingSite.model.messages.Message;
 
 import javax.ws.rs.core.MediaType;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.net.ConnectException;
+import java.util.*;
 
 public class NotificationPanelController {
 
     private Stage stage;
-    private AnchorPane mainPanel, loginPanel;
+    private AnchorPane mainPanel, loginPanel, notificationPanel;
     private User user;
     private EmptyPanelController emptyPanelController;
     private LoginPanelController loginPanelController;
     private MainPanelController mainPanelController;
     private String password;
+
+    private Set<Notification> notificationsList;
+    private Set<Conversation> conversations;
 
     @FXML
     private ImageView avatar;
@@ -62,16 +61,34 @@ public class NotificationPanelController {
     @FXML
     private Separator line, line2;
 
+    private final String applicationTestUrl = "http://localhost:8090/test";
     private final String countNotificationUrl = "http://localhost:8090/notification/count?";
     private final String getNotificationsUrl = "http://localhost:8090/notification/getAll?";
     private final String readNotificationsUrl = "http://localhost:8090/notification/read?";
     private final String deleteNotificationsUrl = "http://localhost:8090/notification/delete";
     private final String getUserUrl = "http://localhost:8090/user/getUser?";
+    private final String countInvitationsUrl = "http://localhost:8090/friends/count?";
+    private final String getConversationUrl = "http://localhost:8090/messages/getConversation?";
 
-    private Set<Notification> notificationsList;
 
     @FXML
-    public void initialize() {
+    public void initialize() throws Exception {
+        try {
+            ClientRequest clientRequest = new ClientRequest(applicationTestUrl);
+            clientRequest.get();
+        } catch (ConnectException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
+            alert.setHeaderText(null);
+            alert.setContentText("Brak połączenia z serwerem!");
+            alert.setTitle("Dating Site");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if((result.get() == ButtonType.OK)){
+                System.exit(0);
+            }
+        }
+
         topic.setVisible(false);
         date.setVisible(false);
         content.setVisible(false);
@@ -81,6 +98,11 @@ public class NotificationPanelController {
     }
 
     public void refresh() throws Exception {
+        Random generator = new Random();
+        int val = generator.nextInt(16) + 1;
+        String path = "images/background/background" + val + ".jpg";
+        notificationPanel.setStyle("-fx-background-image: url('" + path + "'); -fx-background-size: 1200 720; -fx-background-size: cover");
+
         nameAndSurname.setText(user.getName() + " " + user.getSurname());
 
         if(user.getAvatar() != null) {
@@ -93,6 +115,37 @@ public class NotificationPanelController {
         getNotification();
         setBoldRows();
         setCounters();
+        setConversations();
+    }
+
+    @SuppressWarnings("Duplicates")
+    private void setConversations() throws Exception {
+        DefaultHttpClient client = new DefaultHttpClient();
+        Credentials credentials = new UsernamePasswordCredentials(user.getUsername(), password);
+        client.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
+        ApacheHttpClient4Executor executor = new ApacheHttpClient4Executor(client);
+
+        ClientRequest clientRequest = new ClientRequest(getConversationUrl + "username=" + user.getUsername(), executor);
+        this.conversations = (Set<Conversation>)clientRequest.get().getEntity(new GenericType<Set<Conversation>>() {});
+        checkUnreaded(conversations);
+    }
+
+    @SuppressWarnings("Duplicates")
+    private void checkUnreaded(Set<Conversation> conversations) {
+        int counter = 0;
+
+        Iterator<Conversation> conversationIterator = conversations.iterator();
+        while (conversationIterator.hasNext()) {
+            Conversation conversation = conversationIterator.next();
+            List<Message> messages = conversation.getMessages();
+            if(messages.stream().filter(m -> m.getMessageFrom().equals(conversation.getFromWho()) && m.isReaded() == false).count() > 0)
+                counter++;
+        }
+        messageCount.setText(String.valueOf(counter));
+
+        if(messageCount.getText().equals("0"))
+            messagesCounter.setVisible(false);
+
     }
 
     private void getNotification() throws Exception {
@@ -145,6 +198,10 @@ public class NotificationPanelController {
         Integer notificationQuantity = (Integer)clientRequest.get().getEntity(Integer.class);
         notificationCount.setText(notificationQuantity.toString());
 
+        clientRequest = new ClientRequest(countInvitationsUrl + "username=" + user.getUsername(), executor);
+        Integer invitationQuantity = (Integer)clientRequest.get().getEntity(Integer.class);
+        friendsCount.setText(invitationQuantity.toString());
+
         getNotification();
         setBoldRows();
 
@@ -152,8 +209,6 @@ public class NotificationPanelController {
             friendsCounter.setVisible(false);
         if(notificationCount.getText().equals("0"))
             notificationsCounter.setVisible(false);
-        if(messageCount.getText().equals("0"))
-            messagesCounter.setVisible(false);
     }
 
     private void setDataInTable(Set<Notification> notificationsList) {
@@ -246,6 +301,7 @@ public class NotificationPanelController {
             accountInfoPanelController.setMainPanelController(mainPanelController);
             accountInfoPanelController.setPassword(password);
             accountInfoPanelController.setStage(stage);
+            accountInfoPanelController.setAccountInfoPanel(pane);
             accountInfoPanelController.refresh();
             emptyPanelController.setScreen(pane);
         } catch (Exception e) {
@@ -256,6 +312,7 @@ public class NotificationPanelController {
     private boolean displayAlert(String content, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
         alert.setTitle("Dating Site");
+        ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
         alert.setHeaderText(null);
         alert.setContentText(content);
 
@@ -292,6 +349,7 @@ public class NotificationPanelController {
         settingsPanelController.setMainPanelController(mainPanelController);
         settingsPanelController.setPassword(password);
         settingsPanelController.setStage(stage);
+        settingsPanelController.setSettingsPanel(pane);
         settingsPanelController.refresh();
         emptyPanelController.setScreen(pane);
     }
@@ -299,6 +357,7 @@ public class NotificationPanelController {
     @FXML
     public void logout() {
         loginPanelController.clearTextFields();
+        loginPanelController.refresh();
         emptyPanelController.setScreen(loginPanel);
     }
 
@@ -321,6 +380,7 @@ public class NotificationPanelController {
         friendsPanelController.setMainPanelController(mainPanelController);
         friendsPanelController.setPassword(password);
         friendsPanelController.setStage(stage);
+        friendsPanelController.setFriendsPanel(pane);
         friendsPanelController.refresh();
         emptyPanelController.setScreen(pane);
     }
@@ -331,8 +391,27 @@ public class NotificationPanelController {
     }
 
     @FXML
-    public void messages() {
+    public void messages() throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("MessagePanel.fxml"));
+        AnchorPane pane = null;
+        try {
+            pane = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+        MessagePanelController messagePanelController = loader.getController();
+        messagePanelController.setMainPanel(mainPanel);
+        messagePanelController.setUser(user);
+        messagePanelController.setLoginPanelController(loginPanelController);
+        messagePanelController.setEmptyPanelController(emptyPanelController);
+        messagePanelController.setLoginPanel(loginPanel);
+        messagePanelController.setMainPanelController(mainPanelController);
+        messagePanelController.setPassword(password);
+        messagePanelController.setStage(stage);
+        messagePanelController.setMessagePane(pane);
+        messagePanelController.refresh();
+        emptyPanelController.setScreen(pane);
     }
 
     @FXML
@@ -402,5 +481,9 @@ public class NotificationPanelController {
 
     public void setStage(Stage stage) {
         this.stage = stage;
+    }
+
+    public void setNotificationPanel(AnchorPane notificationPanel) {
+        this.notificationPanel = notificationPanel;
     }
 }

@@ -5,7 +5,6 @@ import pl.datingSite.enums.MaritalStatus;
 import pl.datingSite.enums.Profession;
 import pl.datingSite.enums.ZodiacSign;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Set;
 

@@ -9,6 +9,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -28,13 +29,13 @@
    <children>
       <VBox alignment="TOP_CENTER" prefHeight="720.0" prefWidth="1200.0">
          <children>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: #cce6ff #cce6ff;">
                <children>
                   <HBox prefHeight="100.0" prefWidth="450.0">
                      <children>
                         <ImageView fitHeight="150.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@images/logo.jpg" />
+                              <Image url="@images/logo.png" />
                            </image>
                         </ImageView>
                      </children>
@@ -169,7 +170,7 @@
                               <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <GridPane prefHeight="500.0" prefWidth="1200.0">
+                                          <GridPane prefHeight="500.0" prefWidth="1200.0" style="-fx-background-color: #cce6ff; -fx-background-radius: 30;" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                                             <columnConstraints>
                                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -262,6 +263,9 @@
                                                    </children>
                                                 </HBox>
                                              </children>
+                                             <effect>
+                                                <DropShadow height="100.0" radius="49.5" width="100.0" />
+                                             </effect>
                                           </GridPane>
                                        </children>
                                     </AnchorPane>
@@ -271,7 +275,7 @@
                               <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <VBox prefHeight="520.0" prefWidth="1200.0">
+                                          <VBox prefHeight="520.0" prefWidth="1200.0" style="-fx-background-color: #cce6ff; -fx-background-radius: 30;" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                                              <children>
                                                 <GridPane prefHeight="250.0" prefWidth="1200.0">
                                                   <columnConstraints>
@@ -379,6 +383,9 @@
                                                    </children>
                                                 </VBox>
                                              </children>
+                                             <effect>
+                                                <DropShadow height="100.0" radius="49.5" width="100.0" />
+                                             </effect>
                                           </VBox>
                                        </children></AnchorPane>
                               </content>
@@ -387,7 +394,7 @@
                                 <content>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <GridPane prefHeight="520.0" prefWidth="1200.0">
+                                          <GridPane prefHeight="520.0" prefWidth="1200.0" style="-fx-background-color: #cce6ff; -fx-background-radius: 30;" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                                             <columnConstraints>
                                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -521,6 +528,9 @@
                                                    </children>
                                                 </VBox>
                                              </children>
+                                             <effect>
+                                                <DropShadow height="100.0" radius="49.5" width="100.0" />
+                                             </effect>
                                           </GridPane>
                                        </children></AnchorPane>
                                 </content>
@@ -529,9 +539,9 @@
                                 <content>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <HBox alignment="TOP_CENTER" prefHeight="520.0" prefWidth="1200.0">
+                                          <HBox alignment="TOP_CENTER" fillHeight="false" prefHeight="520.0" prefWidth="1200.0" spacing="80.0">
                                              <children>
-                                                <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="600.0" spacing="20.0">
+                                                <VBox alignment="CENTER" fillWidth="false" prefHeight="470.0" prefWidth="500.0" spacing="20.0" style="-fx-background-color: #cce6ff; -fx-background-radius: 30;">
                                                    <children>
                                                       <Label text="Zmiania Hasła" textFill="#730697">
                                                          <font>
@@ -554,7 +564,7 @@
                                                             <Font name="Comic Sans MS" size="24.0" />
                                                          </font>
                                                       </Label>
-                                                      <PasswordField fx:id="newPassword" onKeyTyped="#typeNewPassword" promptText="Podaj nowe Hasło" />
+                                                      <PasswordField fx:id="newPassword" onKeyTyped="#typeNewPassword" prefWidth="300.0" promptText="Podaj nowe Hasło" />
                                                       <Label fx:id="newPasswordError" text="Podaj nowe Hasło" textFill="RED">
                                                          <font>
                                                             <Font name="Comic Sans MS" size="24.0" />
@@ -566,11 +576,14 @@
                                                          </font>
                                                       </Button>
                                                    </children>
-                                                   <padding>
-                                                      <Insets left="50.0" right="50.0" top="10.0" />
-                                                   </padding>
+                                                   <HBox.margin>
+                                                      <Insets top="30.0" />
+                                                   </HBox.margin>
+                                                   <effect>
+                                                      <DropShadow height="100.0" radius="49.5" width="100.0" />
+                                                   </effect>
                                                 </VBox>
-                                                <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="600.0" spacing="30.0">
+                                                <VBox alignment="CENTER" fillWidth="false" prefHeight="350.0" prefWidth="470.0" spacing="30.0" style="-fx-background-color: #cce6ff; -fx-background-radius: 30;">
                                                    <children>
                                                       <Label text="Usuwanie Konta" textFill="#730697">
                                                          <font>
@@ -582,7 +595,7 @@
                                                             <Font name="Comic Sans MS" size="24.0" />
                                                          </font>
                                                       </Label>
-                                                      <PasswordField fx:id="passPassword" onKeyTyped="#typePasswordDelete" promptText="Podaj hasło" />
+                                                      <PasswordField fx:id="passPassword" onKeyTyped="#typePasswordDelete" prefWidth="300.0" promptText="Podaj hasło" />
                                                       <Label fx:id="deleteAccountPasswordError" text="Podane Hasło jest nieprawidłowe" textFill="RED">
                                                          <font>
                                                             <Font name="Comic Sans MS" size="24.0" />
@@ -594,9 +607,12 @@
                                                          </font>
                                                       </Button>
                                                    </children>
-                                                   <padding>
-                                                      <Insets left="50.0" right="50.0" top="50.0" />
-                                                   </padding>
+                                                   <effect>
+                                                      <DropShadow height="100.0" radius="49.5" width="100.0" />
+                                                   </effect>
+                                                   <HBox.margin>
+                                                      <Insets top="80.0" />
+                                                   </HBox.margin>
                                                 </VBox>
                                              </children>
                                           </HBox>

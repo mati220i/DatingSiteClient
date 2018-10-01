@@ -1,23 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.image.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="720.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.datingSite.controllers.RegistrationPanelController">
+<AnchorPane prefHeight="720.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.datingSite.controllers.RegistrationPanelController">
    <children>
-      <VBox prefHeight="720.0" prefWidth="1200.0" spacing="20.0">
+      <VBox alignment="TOP_CENTER" fillWidth="false" prefHeight="720.0" prefWidth="1200.0" spacing="30.0">
          <children>
-            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="720.0" spacing="50.0">
+            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="1200.0" spacing="50.0" style="-fx-background-color: #cce6ff;">
                <children>
-                  <ImageView fitHeight="80.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="100.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@images/logo.jpg" />
+                        <Image url="@images/logo.png" />
                      </image>
                   </ImageView>
                   <Label text="Rejestracja konta" textFill="#0244a1">
@@ -30,13 +39,13 @@
                   <Insets />
                </opaqueInsets>
                <VBox.margin>
-                  <Insets bottom="-1.0" />
+                  <Insets />
                </VBox.margin>
-               <padding>
-                  <Insets left="20.0" />
-               </padding>
+               <effect>
+                  <DropShadow height="100.0" radius="49.5" width="100.0" />
+               </effect>
             </HBox>
-            <GridPane vgap="30.0">
+            <GridPane prefWidth="1200.0" style="-fx-background-color: #cce6ff; -fx-background-radius: 30;" vgap="30.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -170,19 +179,28 @@
                   </HBox>
                </children>
                <padding>
-                  <Insets top="30.0" />
+                  <Insets bottom="30.0" left="10.0" right="10.0" top="30.0" />
                </padding>
+               <effect>
+                  <DropShadow height="100.0" radius="49.5" width="100.0" />
+               </effect>
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </VBox.margin>
             </GridPane>
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="20.0">
+            <VBox alignment="CENTER" prefHeight="180.0" prefWidth="1000.0" spacing="10.0" style="-fx-background-color: #cce6ff; -fx-background-radius: 40;">
                <children>
                   <Label text="Kod aktywacyjny" textFill="#0cb24c">
                      <font>
                         <Font name="Comic Sans MS" size="30.0" />
                      </font>
                   </Label>
-                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+                  <HBox alignment="CENTER" prefHeight="80.0" prefWidth="200.0" spacing="20.0">
                      <children>
-                        <Button fx:id="sendCode" mnemonicParsing="false" onAction="#sendCode" text="Wyślij kod na email" />
+                        <Button fx:id="sendCode" mnemonicParsing="false" onAction="#sendCode" style="-fx-background-radius: 40;" text="Wyślij kod na email">
+                           <font>
+                              <Font name="Comic Sans MS" size="20.0" />
+                           </font></Button>
                         <TextField fx:id="activationCode" maxHeight="50.0" maxWidth="700.0" minHeight="50.0" minWidth="700.0" onKeyTyped="#typeActivationCode" prefHeight="50.0" prefWidth="700.0" promptText="Podaj kod z wiadomości email" />
                      </children>
                   </HBox>
@@ -192,11 +210,26 @@
                      </font>
                   </Label>
                </children>
+               <effect>
+                  <DropShadow height="100.0" radius="49.5" width="100.0" />
+               </effect>
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </VBox.margin>
+               <padding>
+                  <Insets bottom="10.0" top="10.0" />
+               </padding>
             </VBox>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="40.0">
+            <HBox alignment="CENTER" prefHeight="80.0" prefWidth="1200.0" spacing="40.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#cancel" text="Anuluj" />
-                  <Button fx:id="register" mnemonicParsing="false" onAction="#register" text="Zarejestruj konto" />
+                  <Button mnemonicParsing="false" onAction="#cancel" style="-fx-background-radius: 40;" text="Anuluj">
+                     <font>
+                        <Font name="Comic Sans MS" size="20.0" />
+                     </font></Button>
+                  <Button fx:id="register" mnemonicParsing="false" onAction="#register" style="-fx-background-radius: 40;" text="Zarejestruj konto">
+                     <font>
+                        <Font name="Comic Sans MS" size="20.0" />
+                     </font></Button>
                </children>
             </HBox>
          </children>

@@ -13,7 +13,6 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -26,14 +25,16 @@ import pl.datingSite.enums.*;
 import pl.datingSite.model.AppearanceAndCharacter;
 import pl.datingSite.model.City;
 import pl.datingSite.model.User;
+import pl.datingSite.model.messages.Conversation;
+import pl.datingSite.model.messages.Message;
 
 import javax.imageio.ImageIO;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.ws.rs.core.MediaType;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
@@ -43,7 +44,7 @@ import java.util.*;
 public class SettingsPanelController {
 
     private Stage stage;
-    private AnchorPane mainPanel, loginPanel;
+    private AnchorPane mainPanel, loginPanel, settingsPanel;
     private User user;
     private EmptyPanelController emptyPanelController;
     private LoginPanelController loginPanelController;
@@ -51,6 +52,7 @@ public class SettingsPanelController {
     private String password;
 
     private List<City> foundedCties;
+    private Set<Conversation> conversations;
 
     @FXML
     private ImageView avatar, avatar2;
@@ -77,20 +79,45 @@ public class SettingsPanelController {
     private PasswordField presentPassword, newPassword, passPassword;
 
 
+    private final String applicationTestUrl = "http://localhost:8090/test";
     private final String countNotificationUrl = "http://localhost:8090/notification/count?";
     private final String updateUserUrl = "http://localhost:8090/user/updateUser";
     private final String deleteUserUrl = "http://localhost:8090/user/deleteUser";
     private final String changePasswordUrl = "http://localhost:8090/user/changePassword";
     private final String getCityByNameUrl = "http://localhost:8090/city/getByName?";
+    private final String countInvitationsUrl = "http://localhost:8090/friends/count?";
+    private final String getConversationUrl = "http://localhost:8090/messages/getConversation?";
 
     @FXML
-    public void initialize() {
+    public void initialize() throws Exception {
+        try {
+            ClientRequest clientRequest = new ClientRequest(applicationTestUrl);
+            clientRequest.get();
+        } catch (ConnectException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText(null);
+            alert.setTitle("Dating Site");
+            ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
+            alert.setContentText("Brak połączenia z serwerem!");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if((result.get() == ButtonType.OK)){
+                System.exit(0);
+            }
+        }
+
         changePasswordError.setVisible(false);
         deleteAccountPasswordError.setVisible(false);
         newPasswordError.setVisible(false);
     }
 
     public void refresh() throws Exception {
+        Random generator = new Random();
+        int val = generator.nextInt(16) + 1;
+        String path = "images/background/background" + val + ".jpg";
+        settingsPanel.setStyle("-fx-background-image: url('" + path + "'); -fx-background-size: 1200 720; -fx-background-size: cover");
+
+
         nameAndSurname.setText(user.getName() + " " + user.getSurname());
 
         if(user.getAvatar() != null) {
@@ -111,16 +138,49 @@ public class SettingsPanelController {
         Integer notificationQuantity = (Integer)clientRequest.get().getEntity(Integer.class);
         notificationCount.setText(notificationQuantity.toString());
 
+        clientRequest = new ClientRequest(countInvitationsUrl + "username=" + user.getUsername(), executor);
+        Integer invitationQuantity = (Integer)clientRequest.get().getEntity(Integer.class);
+        friendsCount.setText(invitationQuantity.toString());
+
         if(friendsCount.getText().equals("0"))
             friendsCounter.setVisible(false);
         if(notificationCount.getText().equals("0"))
             notificationsCounter.setVisible(false);
-        if(messageCount.getText().equals("0"))
-            messagesCounter.setVisible(false);
 
         setBasicData();
         setAdditional();
         setAppearanceAndCharacter();
+        setConversations();
+    }
+
+    @SuppressWarnings("Duplicates")
+    private void setConversations() throws Exception {
+        DefaultHttpClient client = new DefaultHttpClient();
+        Credentials credentials = new UsernamePasswordCredentials(user.getUsername(), password);
+        client.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
+        ApacheHttpClient4Executor executor = new ApacheHttpClient4Executor(client);
+
+        ClientRequest clientRequest = new ClientRequest(getConversationUrl + "username=" + user.getUsername(), executor);
+        this.conversations = (Set<Conversation>)clientRequest.get().getEntity(new GenericType<Set<Conversation>>() {});
+        checkUnreaded(conversations);
+    }
+
+    @SuppressWarnings("Duplicates")
+    private void checkUnreaded(Set<Conversation> conversations) {
+        int counter = 0;
+
+        Iterator<Conversation> conversationIterator = conversations.iterator();
+        while (conversationIterator.hasNext()) {
+            Conversation conversation = conversationIterator.next();
+            List<Message> messages = conversation.getMessages();
+            if(messages.stream().filter(m -> m.getMessageFrom().equals(conversation.getFromWho()) && m.isReaded() == false).count() > 0)
+                counter++;
+        }
+        messageCount.setText(String.valueOf(counter));
+
+        if(messageCount.getText().equals("0"))
+            messagesCounter.setVisible(false);
+
     }
 
     private void setBasicData() {
@@ -319,6 +379,7 @@ public class SettingsPanelController {
 
     @FXML
     public void typeCity() throws Exception {
+        city.show();
 
         ClientRequest clientRequest = new ClientRequest(getCityByNameUrl + "name=" + city.getEditor().getText());
         this.foundedCties = (List<City>)clientRequest.get().getEntity(new GenericType<List<City>>() {});
@@ -348,6 +409,7 @@ public class SettingsPanelController {
     @FXML
     public void logout() {
         loginPanelController.clearTextFields();
+        loginPanelController.refresh();
         emptyPanelController.setScreen(loginPanel);
     }
 
@@ -370,6 +432,7 @@ public class SettingsPanelController {
         friendsPanelController.setMainPanelController(mainPanelController);
         friendsPanelController.setPassword(password);
         friendsPanelController.setStage(stage);
+        friendsPanelController.setFriendsPanel(pane);
         friendsPanelController.refresh();
         emptyPanelController.setScreen(pane);
     }
@@ -392,19 +455,40 @@ public class SettingsPanelController {
         notificationPanelController.setLoginPanelController(loginPanelController);
         notificationPanelController.setMainPanelController(mainPanelController);
         notificationPanelController.setPassword(password);
+        notificationPanelController.setNotificationPanel(pane);
         notificationPanelController.refresh();
         emptyPanelController.setScreen(pane);
     }
 
     @FXML
-    public void messages() {
+    public void messages() throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("MessagePanel.fxml"));
+        AnchorPane pane = null;
+        try {
+            pane = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+        MessagePanelController messagePanelController = loader.getController();
+        messagePanelController.setUser(user);
+        messagePanelController.setMainPanel(mainPanel);
+        messagePanelController.setLoginPanelController(loginPanelController);
+        messagePanelController.setLoginPanel(loginPanel);
+        messagePanelController.setEmptyPanelController(emptyPanelController);
+        messagePanelController.setMainPanelController(mainPanelController);
+        messagePanelController.setPassword(password);
+        messagePanelController.setStage(stage);
+        messagePanelController.setMessagePane(pane);
+        messagePanelController.refresh();
+        emptyPanelController.setScreen(pane);
     }
 
     @FXML
     public void save() throws Exception {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Dating Site");
+        ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
         alert.setHeaderText(null);
         alert.setContentText("Zapisać dane?");
 
@@ -554,6 +638,7 @@ public class SettingsPanelController {
         if(deletedItem == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Dating Site");
+            ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
             alert.setHeaderText(null);
             alert.setContentText("Nic nie zostało wybrane!");
 
@@ -591,6 +676,7 @@ public class SettingsPanelController {
 
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Dating Site");
+                ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
                 alert.setHeaderText(null);
                 alert.setContentText("Twoje hasło zostało zmienione");
 
@@ -610,6 +696,7 @@ public class SettingsPanelController {
         if(passPassword.getText().trim().equals(password)) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Dating Site");
+            ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
             alert.setHeaderText(null);
             alert.setContentText("Czy na pewno chcesz usunąć swoje konto?");
 
@@ -626,6 +713,7 @@ public class SettingsPanelController {
 
                 Alert alert2 = new Alert(Alert.AlertType.INFORMATION);
                 alert2.setTitle("Dating Site");
+                ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
                 alert2.setHeaderText(null);
                 alert2.setContentText("Twoje konto zostało usunięte");
 
@@ -711,5 +799,9 @@ public class SettingsPanelController {
 
     public void setStage(Stage stage) {
         this.stage = stage;
+    }
+
+    public void setSettingsPanel(AnchorPane settingsPanel) {
+        this.settingsPanel = settingsPanel;
     }
 }

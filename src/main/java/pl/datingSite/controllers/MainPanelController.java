@@ -14,7 +14,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -28,10 +27,11 @@ import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.jboss.resteasy.util.GenericType;
 import pl.datingSite.enums.*;
 import pl.datingSite.model.City;
+import pl.datingSite.model.Roles;
 import pl.datingSite.model.SearchHelper;
 import pl.datingSite.model.User;
-import pl.datingSite.tools.CSVReader;
-import pl.datingSite.tools.DatabaseGenerator;
+import pl.datingSite.model.messages.Conversation;
+import pl.datingSite.model.messages.Message;
 import pl.datingSite.tools.DistanceCalculator;
 import pl.datingSite.tools.ImageNameGenerator;
 
@@ -39,6 +39,7 @@ import javax.ws.rs.core.MediaType;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
@@ -56,8 +57,10 @@ public class MainPanelController {
     private ImageNameGenerator imageNameGenerator;
 
     private List<City> foundedCtiesFrom, foundedCtiesTo;
+    private List<Roles> roles;
     private int choosedCityFrom, choosedCityTo;
 
+    private Set<Conversation> conversations;
 
     @FXML
     private ImageView avatar, currentImage;
@@ -67,6 +70,8 @@ public class MainPanelController {
     private Button settings, logout, friends, notifications, messages;
     @FXML
     private StackPane friendsCounter, notificationsCounter, messagesCounter;
+    @FXML
+    private Tab distanceCalc, dataEditor, databaseGen;
 
     /********  Distance Calculator *******/
     @FXML
@@ -116,14 +121,34 @@ public class MainPanelController {
 
 
 
+    private final String applicationTestUrl = "http://localhost:8090/test";
     private final String countNotificationUrl = "http://localhost:8090/notification/count?";
     private final String getCityByNameUrl = "http://localhost:8090/city/getByName?";
     private final String generateUrl = "http://localhost:8090/databaseGenerator/generate?";
     private final String generatePrepareUrl = "http://localhost:8090/databaseGenerator/generatePrepare";
     private final String getUsersUrl = "http://localhost:8090/user/getUsers";
+    private final String countInvitationsUrl = "http://localhost:8090/friends/count?";
+    private final String getRoleUrl = "http://localhost:8090/user/getRole?";
+    private final String getConversationUrl = "http://localhost:8090/messages/getConversation?";
 
     @FXML
     public void initialize() throws Exception {
+        try {
+            ClientRequest clientRequest = new ClientRequest(applicationTestUrl);
+            clientRequest.get();
+        } catch (ConnectException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Dating Site");
+            alert.setHeaderText(null);
+            ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
+            alert.setContentText("Brak połączenia z serwerem!");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if((result.get() == ButtonType.OK)){
+                System.exit(0);
+            }
+        }
+
         woman.setToggleGroup(toggleGroup);
         man.setToggleGroup(toggleGroup);
         prev.setDisable(true);
@@ -135,9 +160,18 @@ public class MainPanelController {
         generateLabel2.setVisible(false);
         city.setDisable(true);
         pagination.setVisible(false);
+
+        distanceCalc.setDisable(true);
+        dataEditor.setDisable(true);
+        databaseGen.setDisable(true);
     }
 
     public void refresh() throws Exception {
+        Random generator = new Random();
+        int val = generator.nextInt(16) + 1;
+        String path = "images/background/background" + val + ".jpg";
+        mainPanel.setStyle("-fx-background-image: url('" + path + "'); -fx-background-size: 1200 720; -fx-background-size: cover");
+
         nameAndSurname.setText(user.getName() + " " + user.getSurname());
 
         if(user.getAvatar() != null)
@@ -154,14 +188,59 @@ public class MainPanelController {
         Integer notificationQuantity = (Integer)clientRequest.get().getEntity(Integer.class);
         notificationCount.setText(notificationQuantity.toString());
 
+        clientRequest = new ClientRequest(countInvitationsUrl + "username=" + user.getUsername(), executor);
+        Integer invitationQuantity = (Integer)clientRequest.get().getEntity(Integer.class);
+        friendsCount.setText(invitationQuantity.toString());
+
+        clientRequest = new ClientRequest(getRoleUrl + "username=" + user.getUsername(), executor);
+        roles = (List<Roles>) clientRequest.get().getEntity(new GenericType<List<Roles>>() {});
+
+        if(roles.stream().filter(r -> r.getRole().equals("ADMIN")).count() > 0) {
+            distanceCalc.setDisable(false);
+            dataEditor.setDisable(false);
+            databaseGen.setDisable(false);
+        }
+
+        friendsCount.setText(invitationQuantity.toString());
+
+
         if(friendsCount.getText().equals("0"))
             friendsCounter.setVisible(false);
         if(notificationCount.getText().equals("0"))
             notificationsCounter.setVisible(false);
+
+        setSearchData();
+        setConversations();
+    }
+
+    @SuppressWarnings("Duplicates")
+    private void setConversations() throws Exception {
+        DefaultHttpClient client = new DefaultHttpClient();
+        Credentials credentials = new UsernamePasswordCredentials(user.getUsername(), password);
+        client.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
+        ApacheHttpClient4Executor executor = new ApacheHttpClient4Executor(client);
+
+        ClientRequest clientRequest = new ClientRequest(getConversationUrl + "username=" + user.getUsername(), executor);
+        this.conversations = (Set<Conversation>)clientRequest.get().getEntity(new GenericType<Set<Conversation>>() {});
+        checkUnreaded(conversations);
+    }
+
+    @SuppressWarnings("Duplicates")
+    private void checkUnreaded(Set<Conversation> conversations) {
+        int counter = 0;
+
+        Iterator<Conversation> conversationIterator = conversations.iterator();
+        while (conversationIterator.hasNext()) {
+            Conversation conversation = conversationIterator.next();
+            List<Message> messages = conversation.getMessages();
+            if(messages.stream().filter(m -> m.getMessageFrom().equals(conversation.getFromWho()) && m.isReaded() == false).count() > 0)
+                counter++;
+        }
+        messageCount.setText(String.valueOf(counter));
+
         if(messageCount.getText().equals("0"))
             messagesCounter.setVisible(false);
 
-        setSearchData();
     }
 
     @FXML
@@ -172,8 +251,6 @@ public class MainPanelController {
         City from = foundedCtiesFrom.get(choosedCityFrom);
         City to = foundedCtiesTo.get(choosedCityTo);
 
-//        distance.setText(from.getName() + ", " + from.getLatitude() + " : " + from.getLongitude()
-//                + " " + to.getName() + ", " + to.getLatitude() + " : " + to.getLongitude());
         DistanceCalculator calculator = new DistanceCalculator(from, to);
         distance.setText(String.valueOf(calculator.getDistance()));
     }
@@ -186,6 +263,7 @@ public class MainPanelController {
 
         ObservableList<String> options = FXCollections.observableArrayList(citiesName);
         from.setItems(options);
+        from.show();
     }
 
     @FXML
@@ -196,6 +274,7 @@ public class MainPanelController {
 
         ObservableList<String> options = FXCollections.observableArrayList(citiesName);
         to.setItems(options);
+        to.show();
     }
 
     private List<String> getCityNameList(List<City> cities) {
@@ -229,6 +308,7 @@ public class MainPanelController {
         settingsPanelController.setMainPanelController(this);
         settingsPanelController.setPassword(password);
         settingsPanelController.setStage(stage);
+        settingsPanelController.setSettingsPanel(pane);
         settingsPanelController.refresh();
         emptyPanelController.setScreen(pane);
     }
@@ -236,6 +316,7 @@ public class MainPanelController {
     @FXML
     public void logout() {
         loginPanelController.clearTextFields();
+        loginPanelController.refresh();
         emptyPanelController.setScreen(loginPanel);
     }
 
@@ -258,6 +339,7 @@ public class MainPanelController {
         friendsPanelController.setMainPanelController(this);
         friendsPanelController.setPassword(password);
         friendsPanelController.setStage(stage);
+        friendsPanelController.setFriendsPanel(pane);
         friendsPanelController.refresh();
         emptyPanelController.setScreen(pane);
 
@@ -282,13 +364,33 @@ public class MainPanelController {
         notificationPanelController.setMainPanelController(this);
         notificationPanelController.setPassword(password);
         notificationPanelController.setStage(stage);
+        notificationPanelController.setNotificationPanel(pane);
         notificationPanelController.refresh();
         emptyPanelController.setScreen(pane);
     }
 
     @FXML
-    public void messages() {
+    public void messages() throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("MessagePanel.fxml"));
+        AnchorPane pane = null;
+        try {
+            pane = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+        MessagePanelController messagePanelController = loader.getController();
+        messagePanelController.setMainPanel(mainPanel);
+        messagePanelController.setUser(user);
+        messagePanelController.setEmptyPanelController(emptyPanelController);
+        messagePanelController.setLoginPanel(loginPanel);
+        messagePanelController.setLoginPanelController(loginPanelController);
+        messagePanelController.setMainPanelController(this);
+        messagePanelController.setPassword(password);
+        messagePanelController.setStage(stage);
+        messagePanelController.setMessagePane(pane);
+        messagePanelController.refresh();
+        emptyPanelController.setScreen(pane);
     }
 
 
@@ -402,6 +504,7 @@ public class MainPanelController {
     private void alert() {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Dating Site");
+        ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
         alert.setHeaderText(null);
         alert.setContentText("Nie wybrano katalogu zdjęć!");
 
@@ -430,6 +533,7 @@ public class MainPanelController {
     @FXML
     public void typeCity() throws Exception {
         cityError.setVisible(false);
+        city.show();
 
         ClientRequest clientRequest = new ClientRequest(getCityByNameUrl + "name=" + city.getEditor().getText());
         this.foundedCties2 = (List<City>)clientRequest.get().getEntity(new GenericType<List<City>>() {});
@@ -442,6 +546,7 @@ public class MainPanelController {
     @FXML
     public void typeCity2() throws Exception {
         cityError2.setVisible(false);
+        city2.show();
 
         ClientRequest clientRequest = new ClientRequest(getCityByNameUrl + "name=" + city2.getEditor().getText());
         this.foundedCties3 = (List<City>)clientRequest.get().getEntity(new GenericType<List<City>>() {});
@@ -578,6 +683,7 @@ public class MainPanelController {
         ageFromSearch.getSelectionModel().select(null);
         ageToSearch.getSelectionModel().select(null);
         withAvatar.setSelected(false);
+        real.setSelected(false);
         locationFrom.getSelectionModel().select(null);
         distanceFrom.getSelectionModel().select(null);
         maritalStatus.getCheckModel().clearChecks();
@@ -748,6 +854,7 @@ public class MainPanelController {
             accountInfoPanelController.setMainPanelController(this);
             accountInfoPanelController.setPassword(password);
             accountInfoPanelController.setStage(stage);
+            accountInfoPanelController.setAccountInfoPanel(pane);
             accountInfoPanelController.refresh();
             emptyPanelController.setScreen(pane);
         } catch (Exception e) {
@@ -800,6 +907,11 @@ public class MainPanelController {
                     fake.setFont(new Font("Comic Sans MS", 14));
                     fake.setTextFill(Color.RED);
                     vBox.getChildren().addAll(name, age, city, fake);
+                } else if(users.get(i).getUsername().equals("mati")) {
+                    Label fake = new Label("Admin");
+                    fake.setFont(new Font("Comic Sans MS", 14));
+                    fake.setTextFill(Color.BLUE);
+                    vBox.getChildren().addAll(name, age, city, fake);
                 } else
                     vBox.getChildren().addAll(name, age, city);
 
@@ -823,6 +935,7 @@ public class MainPanelController {
 
         ObservableList<String> options = FXCollections.observableArrayList(citiesName);
         locationFrom.setItems(options);
+        locationFrom.show();
         distanceFrom.getSelectionModel().select(4);
     }
 

@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -22,13 +23,13 @@
    <children>
       <VBox alignment="TOP_CENTER" prefHeight="720.0" prefWidth="1200.0">
          <children>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: #cce6ff;">
                <children>
                   <HBox prefHeight="100.0" prefWidth="450.0">
                      <children>
                         <ImageView fitHeight="150.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@images/logo.jpg" />
+                              <Image url="@images/logo.png" />
                            </image>
                         </ImageView>
                      </children>
@@ -157,7 +158,7 @@
                <children>
                   <TabPane prefWidth="1200.0" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
-                        <Tab text="Twoi znajomi">
+                        <Tab fx:id="yourFriends" text="Twoi znajomi">
                           <content>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                  <children>
@@ -165,12 +166,15 @@
                                        <children>
                                           <HBox alignment="TOP_CENTER" prefHeight="500.0" prefWidth="1200.0" spacing="10.0">
                                              <children>
-                                                <ListView fx:id="friendsList" onMouseClicked="#chooseFriend" prefHeight="400.0" prefWidth="350.0">
+                                                <ListView fx:id="friendsList" onMouseClicked="#chooseFriend" prefHeight="400.0" prefWidth="350.0" style="-fx-background-radius: 30;">
                                                    <HBox.margin>
                                                       <Insets bottom="20.0" top="20.0" />
                                                    </HBox.margin>
+                                                   <effect>
+                                                      <DropShadow height="100.0" radius="49.5" width="100.0" />
+                                                   </effect>
                                                 </ListView>
-                                                <HBox fx:id="info" alignment="TOP_CENTER" prefWidth="800.0">
+                                                <HBox fx:id="info" alignment="TOP_CENTER" prefWidth="800.0" style="-fx-background-color: #cce6ff; -fx-background-radius: 30;">
                                                    <children>
                                                       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="350.0" spacing="20.0">
                                                          <children>
@@ -262,7 +266,7 @@
                                                                   <TextField fx:id="name" editable="false" prefWidth="300.0" />
                                                                </children>
                                                             </HBox>
-                                                            <HBox alignment="CENTER" prefHeight="90.0" prefWidth="200.0" spacing="30.0">
+                                                            <VBox alignment="CENTER" prefHeight="120.0" prefWidth="100.0" spacing="20.0">
                                                                <children>
                                                                   <Label text="Lokalizacja" textFill="#730697">
                                                                      <font>
@@ -271,7 +275,13 @@
                                                                   </Label>
                                                                   <TextField fx:id="city" editable="false" prefWidth="250.0" />
                                                                </children>
-                                                            </HBox>
+                                                               <VBox.margin>
+                                                                  <Insets />
+                                                               </VBox.margin>
+                                                               <padding>
+                                                                  <Insets left="10.0" right="10.0" />
+                                                               </padding>
+                                                            </VBox>
                                                             <HBox alignment="CENTER" prefHeight="90.0" prefWidth="200.0" spacing="30.0">
                                                                <children>
                                                                   <Label text="Wiek" textFill="#730697">
@@ -290,6 +300,12 @@
                                                          </children>
                                                       </VBox>
                                                    </children>
+                                                   <effect>
+                                                      <DropShadow height="100.0" radius="49.5" width="100.0" />
+                                                   </effect>
+                                                   <HBox.margin>
+                                                      <Insets top="10.0" />
+                                                   </HBox.margin>
                                                 </HBox>
                                              </children>
                                           </HBox>
@@ -307,7 +323,7 @@
                                  </children></AnchorPane>
                           </content>
                         </Tab>
-                      <Tab text="Zaproszenia">
+                      <Tab fx:id="invitationTab" text="Zaproszenia">
                            <content>
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                  <children>
@@ -315,12 +331,15 @@
                                        <children>
                                           <HBox alignment="TOP_CENTER" prefHeight="500.0" prefWidth="1200.0" spacing="10.0">
                                              <children>
-                                                <ListView fx:id="invitationList" onMouseClicked="#chooseInvitation" prefHeight="400.0" prefWidth="350.0">
+                                                <ListView fx:id="invitationList" onMouseClicked="#chooseInvitation" prefHeight="400.0" prefWidth="350.0" style="-fx-background-radius: 30;">
                                                    <HBox.margin>
                                                       <Insets bottom="20.0" top="20.0" />
                                                    </HBox.margin>
+                                                   <effect>
+                                                      <DropShadow height="100.0" radius="49.5" width="100.0" />
+                                                   </effect>
                                                 </ListView>
-                                                <HBox fx:id="infoInvit" alignment="TOP_CENTER" prefWidth="800.0">
+                                                <HBox fx:id="infoInvit" alignment="TOP_CENTER" prefWidth="800.0" style="-fx-background-color: #cce6ff; -fx-background-radius: 30;">
                                                    <children>
                                                       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="350.0" spacing="20.0">
                                                          <children>
@@ -394,7 +413,10 @@
                                                                   <TextField fx:id="nameInvit" editable="false" prefWidth="300.0" />
                                                                </children>
                                                             </HBox>
-                                                            <HBox alignment="CENTER" prefHeight="90.0" prefWidth="200.0" spacing="30.0">
+                                                            <VBox alignment="CENTER" prefHeight="120.0" prefWidth="100.0" spacing="20.0">
+                                                               <padding>
+                                                                  <Insets left="10.0" right="10.0" />
+                                                               </padding>
                                                                <children>
                                                                   <Label text="Lokalizacja" textFill="#730697">
                                                                      <font>
@@ -403,7 +425,7 @@
                                                                   </Label>
                                                                   <TextField fx:id="cityInvit" editable="false" prefWidth="250.0" />
                                                                </children>
-                                                            </HBox>
+                                                            </VBox>
                                                             <HBox alignment="CENTER" prefHeight="90.0" prefWidth="200.0" spacing="30.0">
                                                                <children>
                                                                   <Label text="Wiek" textFill="#730697">
@@ -422,6 +444,12 @@
                                                          </children>
                                                       </VBox>
                                                    </children>
+                                                   <effect>
+                                                      <DropShadow height="100.0" radius="49.5" width="100.0" />
+                                                   </effect>
+                                                   <HBox.margin>
+                                                      <Insets top="10.0" />
+                                                   </HBox.margin>
                                                 </HBox>
                                              </children>
                                           </HBox>
@@ -440,6 +468,142 @@
                               </AnchorPane>
                            </content>
                       </Tab>
+                        <Tab fx:id="sentInvitations" text="Wysłane">
+                            <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                    <children>
+                                        <VBox alignment="TOP_CENTER" prefHeight="580.0" prefWidth="1200.0">
+                                            <children>
+                                                <HBox alignment="TOP_CENTER" prefHeight="500.0" prefWidth="1200.0" spacing="10.0">
+                                                    <children>
+                                                        <ListView fx:id="sendInvitationList" onMouseClicked="#chooseSendInvitation" prefHeight="400.0" prefWidth="350.0" style="-fx-background-radius: 30;">
+                                                            <HBox.margin>
+                                                                <Insets bottom="20.0" top="20.0" />
+                                                            </HBox.margin>
+                                                   <effect>
+                                                      <DropShadow height="100.0" radius="49.5" width="100.0" />
+                                                   </effect>
+                                                        </ListView>
+                                                        <HBox fx:id="infoSendInvit" alignment="TOP_CENTER" prefWidth="800.0" style="-fx-background-radius: 30; -fx-background-color: #cce6ff;">
+                                                            <children>
+                                                                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="350.0" spacing="20.0">
+                                                                    <children>
+                                                                        <ImageView fx:id="avatarSendInvit" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@images/woman.jpg" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+                                                                            <children>
+                                                                                <Button mnemonicParsing="false" onAction="#undoInvitation" style="-fx-background-radius: 30;">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@images/remove.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                                <Button mnemonicParsing="false" onAction="#viewProfileSent" style="-fx-background-radius: 30;">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@images/profile.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                            </children>
+                                                                        </HBox>
+                                                                    </children>
+                                                                </VBox>
+                                                                <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="450.0">
+                                                                    <children>
+                                                                        <HBox alignment="CENTER" prefHeight="90.0" prefWidth="200.0" spacing="30.0">
+                                                                            <children>
+                                                                                <Label text="Płeć" textFill="#730697">
+                                                                                    <font>
+                                                                                        <Font name="Comic Sans MS" size="30.0" />
+                                                                                    </font>
+                                                                                </Label>
+                                                                                <TextField fx:id="sexSendInvit" editable="false" prefWidth="300.0" />
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER" prefHeight="90.0" prefWidth="200.0" spacing="30.0">
+                                                                            <children>
+                                                                                <Label text="Login" textFill="#730697">
+                                                                                    <font>
+                                                                                        <Font name="Comic Sans MS" size="30.0" />
+                                                                                    </font>
+                                                                                </Label>
+                                                                                <TextField fx:id="loginSendInvit" editable="false" prefWidth="300.0" />
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER" prefHeight="90.0" prefWidth="200.0" spacing="30.0">
+                                                                            <children>
+                                                                                <Label text="Imię" textFill="#730697">
+                                                                                    <font>
+                                                                                        <Font name="Comic Sans MS" size="30.0" />
+                                                                                    </font>
+                                                                                </Label>
+                                                                                <TextField fx:id="nameSendInvit" editable="false" prefWidth="300.0" />
+                                                                            </children>
+                                                                        </HBox>
+                                                            <VBox alignment="CENTER" prefHeight="120.0" prefWidth="100.0" spacing="20.0">
+                                                               <padding>
+                                                                  <Insets left="10.0" right="10.0" />
+                                                               </padding>
+                                                               <children>
+                                                                                <Label text="Lokalizacja" textFill="#730697">
+                                                                                    <font>
+                                                                                        <Font name="Comic Sans MS" size="30.0" />
+                                                                                    </font>
+                                                                                </Label>
+                                                                                <TextField fx:id="citySendInvit" editable="false" prefWidth="250.0" />
+                                                               </children>
+                                                            </VBox>
+                                                                        <HBox alignment="CENTER" prefHeight="90.0" prefWidth="200.0" spacing="30.0">
+                                                                            <children>
+                                                                                <Label text="Wiek" textFill="#730697">
+                                                                                    <font>
+                                                                                        <Font name="Comic Sans MS" size="30.0" />
+                                                                                    </font>
+                                                                                </Label>
+                                                                                <TextField fx:id="ageSendInvit" editable="false" />
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <Label fx:id="fakeSendInvit" text="Fake" textFill="RED">
+                                                                            <font>
+                                                                                <Font name="Comic Sans MS" size="30.0" />
+                                                                            </font>
+                                                                        </Label>
+                                                                    </children>
+                                                                </VBox>
+                                                            </children>
+                                                   <effect>
+                                                      <DropShadow height="100.0" radius="49.5" width="100.0" />
+                                                   </effect>
+                                                   <HBox.margin>
+                                                      <Insets top="10.0" />
+                                                   </HBox.margin>
+                                                        </HBox>
+                                                    </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="50.0">
+                                                    <children>
+                                                        <Button mnemonicParsing="false" onAction="#back" style="-fx-background-radius: 40;" text="Wróć">
+                                                            <font>
+                                                                <Font name="Comic Sans MS" size="20.0" />
+                                                            </font>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </AnchorPane>
+                            </content>
+                        </Tab>
                     </tabs>
                   </TabPane>
                </children></HBox>

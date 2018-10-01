@@ -4,9 +4,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.control.Alert.AlertType;
+import javafx.stage.Stage;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.util.GenericType;
 import pl.datingSite.tools.EmailValidator;
@@ -38,7 +40,7 @@ public class RegistrationPanelController {
     @FXML
     private DatePicker age;
 
-    private AnchorPane loginPane;
+    private AnchorPane loginPane, registrationPanel;
     private EmptyPanelController emptyPanelController;
     private LoginPanelController loginPanelController;
 
@@ -47,6 +49,8 @@ public class RegistrationPanelController {
     private List<City> foundedCties;
     private int choosedCity;
 
+
+    private final String applicationTestUrl = "http://localhost:8090/test";
     private final String checkLoginUrl = "http://localhost:8090/user/registration/checkLogin/";
     private final String checkEmailUrl = "http://localhost:8090/user/registration/checkEmail/";
     private final String addCodeUrl = "http://localhost:8090/activationCode/addCode";
@@ -57,6 +61,22 @@ public class RegistrationPanelController {
 
     @FXML
     public void initialize() throws Exception {
+        try {
+            ClientRequest clientRequest = new ClientRequest(applicationTestUrl);
+            clientRequest.get();
+        } catch (ConnectException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText(null);
+            ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
+            alert.setContentText("Brak połączenia z serwerem!");
+            alert.setTitle("Dating Site");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if((result.get() == ButtonType.OK)){
+                System.exit(0);
+            }
+        }
+
         nameError.setVisible(false);
         sexError.setVisible(false);
         emailError.setVisible(false);
@@ -76,6 +96,13 @@ public class RegistrationPanelController {
         sex.setItems(options);
     }
 
+    public void refresh() {
+        Random generator = new Random();
+        int val = generator.nextInt(16) + 1;
+        String path = "images/background/background" + val + ".jpg";
+        registrationPanel.setStyle("-fx-background-image: url('" + path + "'); -fx-background-size: 1200 720; -fx-background-size: cover");
+    }
+
     @FXML
     public void register() throws Exception {
         if (checkActivationCode(activationCode.getText())) {
@@ -85,6 +112,7 @@ public class RegistrationPanelController {
 
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Rejestracja");
+            ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
             alert.setHeaderText(null);
             alert.setContentText("Konto zostało założone, możesz teraz się na nie zalogować");
 
@@ -112,6 +140,7 @@ public class RegistrationPanelController {
         } catch (ConnectException e) {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Dating Site");
+            ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
             alert.setHeaderText(null);
             alert.setContentText("Brak połączenia z serwerem!");
 
@@ -125,6 +154,7 @@ public class RegistrationPanelController {
     @FXML
     public void cancel() {
         loginPanelController.clearTextFields();
+        loginPanelController.refresh();
         emptyPanelController.setScreen(loginPane);
     }
 
@@ -156,6 +186,7 @@ public class RegistrationPanelController {
     @FXML
     public void typeCity() throws Exception {
         cityError.setVisible(false);
+        city.show();
 
         ClientRequest clientRequest = new ClientRequest(getCityByNameUrl + "name=" + city.getEditor().getText());
         this.foundedCties = (List<City>)clientRequest.get().getEntity(new GenericType<List<City>>() {});
@@ -321,7 +352,7 @@ public class RegistrationPanelController {
     private void sendEmailWithCode(ActivationCode activationCode) {
 
         final String username = "datingsite@wp.pl";
-        final String password = "datingsite2";
+        final String password = "datingsite3";
 
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.wp.pl");
@@ -400,5 +431,9 @@ public class RegistrationPanelController {
 
     public void setLoginPanelController(LoginPanelController loginPanelController) {
         this.loginPanelController = loginPanelController;
+    }
+
+    public void setRegistrationPanel(AnchorPane registrationPanel) {
+        this.registrationPanel = registrationPanel;
     }
 }

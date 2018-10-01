@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -22,13 +23,13 @@
     <children>
         <VBox alignment="TOP_CENTER" prefHeight="720.0" prefWidth="1200.0">
             <children>
-                <HBox prefHeight="100.0" prefWidth="200.0">
+                <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: #cce6ff;">
                     <children>
                         <HBox prefHeight="100.0" prefWidth="450.0">
                             <children>
                                 <ImageView fitHeight="150.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@images/logo.jpg" />
+                                        <Image url="@images/logo.png" />
                                     </image>
                                 </ImageView>
                             </children>
@@ -160,8 +161,11 @@
                       <TableColumn fx:id="topicColumn" prefWidth="235.0" text="Temat" />
                       <TableColumn fx:id="dateColumn" minWidth="9.0" prefWidth="164.0" text="Data" />
                     </columns>
+                     <effect>
+                        <DropShadow height="100.0" radius="49.5" width="100.0" />
+                     </effect>
                   </TableView>
-                        <VBox layoutX="10.0" layoutY="10.0" prefHeight="600.0" prefWidth="900.0" spacing="20.0">
+                        <VBox layoutX="10.0" layoutY="10.0" prefHeight="600.0" prefWidth="900.0" spacing="20.0" style="-fx-background-color: #cce6ff; -fx-background-radius: 30;">
                      <children>
                         <HBox alignment="CENTER" prefHeight="80.0" prefWidth="200.0" spacing="100.0">
                            <children>
@@ -211,7 +215,13 @@
                      </children>
                      <padding>
                         <Insets bottom="40.0" left="30.0" right="20.0" top="30.0" />
-                     </padding></VBox>
+                     </padding>
+                     <effect>
+                        <DropShadow height="100.0" radius="49.5" width="100.0" />
+                     </effect>
+                     <HBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </HBox.margin></VBox>
                     </children>
                <VBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" />

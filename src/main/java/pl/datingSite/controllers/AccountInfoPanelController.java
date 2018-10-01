@@ -8,26 +8,31 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.controlsfx.control.CheckComboBox;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
+import org.jboss.resteasy.util.GenericType;
 import pl.datingSite.enums.Holiday;
 import pl.datingSite.enums.LookingFor;
 import pl.datingSite.enums.MovieType;
 import pl.datingSite.enums.Style;
-import pl.datingSite.model.City;
+import pl.datingSite.model.Friends;
 import pl.datingSite.model.User;
+import pl.datingSite.model.messages.Conversation;
+import pl.datingSite.model.messages.Message;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.net.ConnectException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
@@ -35,19 +40,22 @@ import java.util.*;
 
 public class AccountInfoPanelController {
     private Stage stage;
-    private AnchorPane mainPanel, loginPanel;
+    private AnchorPane mainPanel, loginPanel, accountInfoPanel;
     private User loggedUser, userToView;
     private EmptyPanelController emptyPanelController;
     private LoginPanelController loginPanelController;
     private MainPanelController mainPanelController;
     private String password;
+    private Friends userFriends;
+
+    private Set<Conversation> conversations;
 
     @FXML
     private ImageView avatar, avatar2;
     @FXML
     private Label nameAndSurname, friendsCount, notificationCount, messageCount, fake;
     @FXML
-    private Button settings, logout, friends, notifications, messages;
+    private Button settings, logout, friends, notifications, messages, addToFriends;
     @FXML
     private StackPane friendsCounter, notificationsCounter, messagesCounter;
 
@@ -56,19 +64,49 @@ public class AccountInfoPanelController {
             figure, hairColor, eyeColor, smoking, alkohol, children, religion, height;
     @FXML
     ListView<String> interests, style, holiday, lookingFor, movieType;
+    @FXML
+    private HBox buttons;
 
 
+    private final String applicationTestUrl = "http://localhost:8090/test";
     private final String countNotificationUrl = "http://localhost:8090/notification/count?";
     private final String newWaveNotificationUrl = "http://localhost:8090/notification/newWave?";
     private final String newKissNotificationUrl = "http://localhost:8090/notification/newKiss?";
+    private final String sendInvitationUrl = "http://localhost:8090/friends/sendInvitation?";
+    private final String getFriendsUrl = "http://localhost:8090/friends/getFriends?";
+    private final String countInvitationsUrl = "http://localhost:8090/friends/count?";
+    private final String getConversationUrl = "http://localhost:8090/messages/getConversation?";
 
     @FXML
-    public void initialize() {
+    public void initialize() throws Exception {
+        try {
+            ClientRequest clientRequest = new ClientRequest(applicationTestUrl);
+            clientRequest.get();
+        } catch (ConnectException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
+            alert.setTitle("Dating Site");
+            alert.setHeaderText(null);
+            alert.setContentText("Brak połączenia z serwerem!");
 
+            Optional<ButtonType> result = alert.showAndWait();
+            if((result.get() == ButtonType.OK)){
+                System.exit(0);
+            }
+        }
     }
 
     public void refresh() throws Exception {
+        Random generator = new Random();
+        int val = generator.nextInt(16) + 1;
+        String path = "images/background/background" + val + ".jpg";
+        accountInfoPanel.setStyle("-fx-background-image: url('" + path + "'); -fx-background-size: 1200 720; -fx-background-size: cover");
+
+
         nameAndSurname.setText(loggedUser.getName() + " " + loggedUser.getSurname());
+
+        if(loggedUser.getUsername().equals(userToView.getUsername()))
+            buttons.setVisible(false);
 
         if(loggedUser.getAvatar() != null) {
             avatar.setImage(new Image(new ByteArrayInputStream(loggedUser.getAvatar())));
@@ -85,16 +123,65 @@ public class AccountInfoPanelController {
         Integer notificationQuantity = (Integer)clientRequest.get().getEntity(Integer.class);
         notificationCount.setText(notificationQuantity.toString());
 
+        clientRequest = new ClientRequest(countInvitationsUrl + "username=" + loggedUser.getUsername(), executor);
+        Integer invitationQuantity = (Integer)clientRequest.get().getEntity(Integer.class);
+        friendsCount.setText(invitationQuantity.toString());
+
+        setVisibleFriendsButton();
+
         if(friendsCount.getText().equals("0"))
             friendsCounter.setVisible(false);
         if(notificationCount.getText().equals("0"))
             notificationsCounter.setVisible(false);
-        if(messageCount.getText().equals("0"))
-            messagesCounter.setVisible(false);
 
         setBasicData();
         setAdditional();
         setAppearanceAndCharacter();
+        setConversations();
+    }
+
+    @SuppressWarnings("Duplicates")
+    private void setConversations() throws Exception {
+        DefaultHttpClient client = new DefaultHttpClient();
+        Credentials credentials = new UsernamePasswordCredentials(loggedUser.getUsername(), password);
+        client.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
+        ApacheHttpClient4Executor executor = new ApacheHttpClient4Executor(client);
+
+        ClientRequest clientRequest = new ClientRequest(getConversationUrl + "username=" + loggedUser.getUsername(), executor);
+        this.conversations = (Set<Conversation>)clientRequest.get().getEntity(new GenericType<Set<Conversation>>() {});
+        checkUnreaded(conversations);
+    }
+
+    @SuppressWarnings("Duplicates")
+    private void checkUnreaded(Set<Conversation> conversations) {
+        int counter = 0;
+
+        Iterator<Conversation> conversationIterator = conversations.iterator();
+        while (conversationIterator.hasNext()) {
+            Conversation conversation = conversationIterator.next();
+            List<Message> messages = conversation.getMessages();
+            if(messages.stream().filter(m -> m.getMessageFrom().equals(conversation.getFromWho()) && m.isReaded() == false).count() > 0)
+                counter++;
+        }
+        messageCount.setText(String.valueOf(counter));
+
+        if(messageCount.getText().equals("0"))
+            messagesCounter.setVisible(false);
+
+    }
+
+    private void setVisibleFriendsButton() throws Exception {
+        DefaultHttpClient client = new DefaultHttpClient();
+        Credentials credentials = new UsernamePasswordCredentials(loggedUser.getUsername(), password);
+        client.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
+        ApacheHttpClient4Executor executor = new ApacheHttpClient4Executor(client);
+
+        ClientRequest clientRequest = new ClientRequest(getFriendsUrl + "username=" + loggedUser.getUsername(), executor);
+        this.userFriends = (Friends) clientRequest.get().getEntity(Friends.class);
+
+        if(userFriends.getSendInvitations().contains(userToView.getUsername()) || userFriends.getFriendsUsernames().contains(userToView.getUsername())
+                || userFriends.getInvitationsFrom().contains(userToView.getUsername()))
+            addToFriends.setVisible(false);
     }
 
     private void setBasicData() {
@@ -116,8 +203,17 @@ public class AccountInfoPanelController {
         Period period = Period.between(birth, now);
         age.setText(String.valueOf(period.getYears()));
 
-        if(userToView.isFake())
+        if(userToView.isFake()) {
+            fake.setText("Fake");
+            fake.setFont(new Font("Comic Sans MS", 30));
+            fake.setTextFill(Color.RED);
             fake.setVisible(true);
+        } else if(userToView.getUsername().equals("mati")) {
+            fake.setText("Admin");
+            fake.setFont(new Font("Comic Sans MS", 30));
+            fake.setTextFill(Color.BLUE);
+            fake.setVisible(true);
+        }
         else
             fake.setVisible(false);
     }
@@ -295,13 +391,53 @@ public class AccountInfoPanelController {
     }
 
     @FXML
-    public void addToFriends() {
+    public void addToFriends() throws Exception {
+        DefaultHttpClient client = new DefaultHttpClient();
+        Credentials credentials = new UsernamePasswordCredentials(loggedUser.getUsername(), password);
+        client.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
+        ApacheHttpClient4Executor executor = new ApacheHttpClient4Executor(client);
 
+        ClientRequest clientRequest = new ClientRequest(sendInvitationUrl + "from=" + loggedUser.getUsername() + "&to=" + userToView.getUsername(), executor);
+        userFriends = (Friends) clientRequest.put().getEntity(Friends.class);
+
+        if(userFriends != null) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Dating Site");
+            ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
+            alert.setHeaderText(null);
+            alert.setContentText("Zaprosiłeś użytkownika " + userToView.getName() + " do grona znajomych");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if((result.get() == ButtonType.OK)){
+                setVisibleFriendsButton();
+            }
+        }
     }
 
     @FXML
-    public void writeMessage() {
+    public void writeMessage() throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("MessagePanel.fxml"));
+        AnchorPane pane = null;
+        try {
+            pane = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+        MessagePanelController messagePanelController = loader.getController();
+        messagePanelController.setMainPanel(mainPanel);
+        messagePanelController.setUser(loggedUser);
+        messagePanelController.setEmptyPanelController(emptyPanelController);
+        messagePanelController.setLoginPanel(loginPanel);
+        messagePanelController.setLoginPanelController(loginPanelController);
+        messagePanelController.setMainPanelController(mainPanelController);
+        messagePanelController.setConversationWith(userToView);
+        messagePanelController.setPassword(password);
+        messagePanelController.setStage(stage);
+        messagePanelController.setMessagePane(pane);
+        messagePanelController.refresh();
+        messagePanelController.toWriteMessage();
+        emptyPanelController.setScreen(pane);
     }
 
     @FXML
@@ -316,6 +452,7 @@ public class AccountInfoPanelController {
         if(clientResponse.getStatus() == 200) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Dating Site");
+            ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
             alert.setHeaderText(null);
             alert.setContentText("Pomachałeś użytkownikowi " + userToView.getName());
 
@@ -339,8 +476,9 @@ public class AccountInfoPanelController {
         if(clientResponse.getStatus() == 200) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Dating Site");
+            ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
             alert.setHeaderText(null);
-            alert.setContentText("Całos został wysłany użytkownikowi " + userToView.getName());
+            alert.setContentText("Całus został wysłany użytkownikowi " + userToView.getName());
 
             Optional<ButtonType> result = alert.showAndWait();
             if((result.get() == ButtonType.OK)){
@@ -368,6 +506,7 @@ public class AccountInfoPanelController {
         settingsPanelController.setMainPanelController(mainPanelController);
         settingsPanelController.setPassword(password);
         settingsPanelController.setStage(stage);
+        settingsPanelController.setSettingsPanel(pane);
         settingsPanelController.refresh();
         emptyPanelController.setScreen(pane);
     }
@@ -375,6 +514,7 @@ public class AccountInfoPanelController {
     @FXML
     public void logout() {
         loginPanelController.clearTextFields();
+        loginPanelController.refresh();
         emptyPanelController.setScreen(loginPanel);
     }
 
@@ -397,6 +537,7 @@ public class AccountInfoPanelController {
         friendsPanelController.setMainPanelController(mainPanelController);
         friendsPanelController.setPassword(password);
         friendsPanelController.setStage(stage);
+        friendsPanelController.setFriendsPanel(pane);
         friendsPanelController.refresh();
         emptyPanelController.setScreen(pane);
     }
@@ -419,13 +560,33 @@ public class AccountInfoPanelController {
         notificationPanelController.setLoginPanelController(loginPanelController);
         notificationPanelController.setMainPanelController(mainPanelController);
         notificationPanelController.setPassword(password);
+        notificationPanelController.setNotificationPanel(pane);
         notificationPanelController.refresh();
         emptyPanelController.setScreen(pane);
     }
 
     @FXML
-    public void messages() {
+    public void messages() throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("MessagePanel.fxml"));
+        AnchorPane pane = null;
+        try {
+            pane = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+        MessagePanelController messagePanelController = loader.getController();
+        messagePanelController.setMainPanel(mainPanel);
+        messagePanelController.setUser(loggedUser);
+        messagePanelController.setEmptyPanelController(emptyPanelController);
+        messagePanelController.setLoginPanel(loginPanel);
+        messagePanelController.setLoginPanelController(loginPanelController);
+        messagePanelController.setMainPanelController(mainPanelController);
+        messagePanelController.setPassword(password);
+        messagePanelController.setStage(stage);
+        messagePanelController.setMessagePane(pane);
+        messagePanelController.refresh();
+        emptyPanelController.setScreen(pane);
     }
 
     @FXML
@@ -469,5 +630,9 @@ public class AccountInfoPanelController {
 
     public void setStage(Stage stage) {
         this.stage = stage;
+    }
+
+    public void setAccountInfoPanel(AnchorPane accountInfoPanel) {
+        this.accountInfoPanel = accountInfoPanel;
     }
 }
