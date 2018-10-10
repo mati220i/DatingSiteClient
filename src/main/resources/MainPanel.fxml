@@ -166,7 +166,63 @@
                     <tabs>
                         <Tab text="Inteligentne dobieranie">
                           <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <HBox alignment="CENTER" fillHeight="false" prefHeight="580.0" prefWidth="1200.0" spacing="20.0">
+                                       <children>
+                                          <VBox alignment="TOP_CENTER" prefWidth="380.0" style="-fx-background-color: #cce6ff; -fx-background-radius: 30;">
+                                             <children>
+                                                <VBox alignment="TOP_CENTER" prefWidth="400.0" spacing="10.0">
+                                                   <children>
+                                                      <Label text="Wyszukaj osoby które pasują do Ciebie">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="18.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets top="10.0" />
+                                                   </padding>
+                                                </VBox>
+                                                <HBox alignment="CENTER" prefHeight="80.0" prefWidth="400.0" spacing="30.0">
+                                                   <children>
+                                                      <CheckBox fx:id="realOnly" mnemonicParsing="false" text="Tylko realne">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="20.0" />
+                                                         </font>
+                                                      </CheckBox>
+                                                      <Button mnemonicParsing="false" onAction="#fit" style="-fx-background-radius: 50;" text="Wyszukaj">
+                                                         <font>
+                                                            <Font name="Comic Sans MS" size="20.0" />
+                                                         </font>
+                                                      </Button>
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                             <effect>
+                                                <DropShadow height="100.0" radius="49.5" width="100.0" />
+                                             </effect>
+                                          </VBox>
+                                          <VBox prefHeight="580.0" prefWidth="800.0" style="-fx-background-radius: 30;">
+                                             <children>
+                                                <ScrollPane prefHeight="800.0" prefWidth="800.0" style="-fx-background-radius: 30;">
+                                                   <content>
+                                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1150.0" prefWidth="780.0" style="-fx-background-radius: 30;">
+                                                         <children>
+                                                            <VBox fx:id="resultVBoxAuto" alignment="TOP_CENTER" prefHeight="1150.0" prefWidth="780.0">
+                                                               <children>
+                                                                  <Pagination fx:id="paginationAuto" prefHeight="580.0" prefWidth="780.0" />
+                                                               </children>
+                                                            </VBox>
+                                                         </children>
+                                                      </AnchorPane>
+                                                   </content>
+                                                </ScrollPane>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                 </children></AnchorPane>
                           </content>
                         </Tab>
                       <Tab text="Szybkie wyszukiwanie">

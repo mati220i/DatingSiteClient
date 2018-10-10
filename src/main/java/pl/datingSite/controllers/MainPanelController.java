@@ -14,6 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -26,10 +27,7 @@ import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.jboss.resteasy.util.GenericType;
 import pl.datingSite.enums.*;
-import pl.datingSite.model.City;
-import pl.datingSite.model.Roles;
-import pl.datingSite.model.SearchHelper;
-import pl.datingSite.model.User;
+import pl.datingSite.model.*;
 import pl.datingSite.model.messages.Conversation;
 import pl.datingSite.model.messages.Message;
 import pl.datingSite.tools.DistanceCalculator;
@@ -117,7 +115,16 @@ public class MainPanelController {
     private Pagination pagination;
     private final int ITEM_PER_PAGE = 6;
     private List<City> foundedCitiesSearch;
-    private List<User> users;
+    private List<FoundUser> foundUsers;
+
+    /************ Intelligent Search *************/
+    @FXML
+    private VBox resultVBoxAuto;
+    @FXML
+    private CheckBox realOnly;
+    @FXML
+    private Pagination paginationAuto;
+    private List<ClassifiedUser> classifiedUsers;
 
 
 
@@ -130,6 +137,8 @@ public class MainPanelController {
     private final String countInvitationsUrl = "http://localhost:8090/friends/count?";
     private final String getRoleUrl = "http://localhost:8090/user/getRole?";
     private final String getConversationUrl = "http://localhost:8090/messages/getConversation?";
+    private final String getUserUrl = "http://localhost:8090/user/getUser?";
+    private final String getFitUsersUrl = "http://localhost:8090/user/getFitUsers?";
 
     @FXML
     public void initialize() throws Exception {
@@ -160,6 +169,7 @@ public class MainPanelController {
         generateLabel2.setVisible(false);
         city.setDisable(true);
         pagination.setVisible(false);
+        paginationAuto.setVisible(false);
 
         distanceCalc.setDisable(true);
         dataEditor.setDisable(true);
@@ -814,7 +824,7 @@ public class MainPanelController {
                 ClientRequest clientRequest = new ClientRequest(getUsersUrl, executor);
                 clientRequest.body(MediaType.APPLICATION_JSON, searchHelper);
                 try {
-                    users = new ArrayList<>((Set<User>) clientRequest.post().getEntity(new GenericType<Set<User>>() {
+                    foundUsers = new ArrayList<>((Set<FoundUser>) clientRequest.post().getEntity(new GenericType<Set<FoundUser>>() {
                     }));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -823,7 +833,7 @@ public class MainPanelController {
                 Platform.runLater(
                         () -> {
                             pagination.setVisible(true);
-                            int maxPage = (int) Math.ceil((double) users.size() / (double) ITEM_PER_PAGE);
+                            int maxPage = (int) Math.ceil((double) foundUsers.size() / (double) ITEM_PER_PAGE);
                             pagination.setPageCount(maxPage);
                             pagination.setPageFactory((Integer pageIndex) -> createPage(pageIndex));
                             resultVBox.getChildren().remove(indicator);
@@ -834,7 +844,14 @@ public class MainPanelController {
 
     }
 
-    private void viewProfile(User user) {
+    private void viewProfile(String username) {
+        User user = null;
+        try {
+            user = getUser(username);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("AccountInfoPanel.fxml"));
             AnchorPane pane = null;
@@ -870,12 +887,12 @@ public class MainPanelController {
         int page = pageIndex * ITEM_PER_PAGE;
         for (int i = page; i < page + ITEM_PER_PAGE; i++) {
 
-            if(i < users.size()) {
+            if(i < foundUsers.size()) {
                 HBox element = new HBox(10);
 
                 ImageView imageView;
-                if(users.get(i).getAvatar() != null) {
-                    imageView = new ImageView(new Image(new ByteArrayInputStream(users.get(i).getAvatar())));
+                if(foundUsers.get(i).getAvatar() != null) {
+                    imageView = new ImageView(new Image(new ByteArrayInputStream(foundUsers.get(i).getAvatar())));
                     imageView.setFitHeight(120);
                     imageView.setFitWidth(120);
 
@@ -887,27 +904,27 @@ public class MainPanelController {
 
                 VBox vBox = new VBox(10);
                 vBox.setAlignment(Pos.CENTER_LEFT);
-                Label name = new Label("Imię: " + users.get(i).getName());
+                Label name = new Label("Imię: " + foundUsers.get(i).getName());
                 name.setFont(new Font("Comic Sans MS", 14));
 
                 LocalDate now = LocalDate.now();
-                LocalDate birth = users.get(i).getDateOfBirth().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate birth = foundUsers.get(i).getDateOfBirth().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 Period period = Period.between(birth, now);
 
                 Label age = new Label("Wiek: " + String.valueOf(period.getYears()));
                 age.setFont(new Font("Comic Sans MS", 14));
 
-                City userCity = users.get(i).getCity();
+                City userCity = foundUsers.get(i).getCity();
                 String cityData = userCity.getName() + ", Woj. " + userCity.getVoivodeship() + ", Pow. " + userCity.getCountry() + ", Gmina " + userCity.getCommunity();
                 Label city = new Label("Lokalizacja: " + cityData);
                 city.setFont(new Font("Comic Sans MS", 14));
 
-                if(users.get(i).isFake()) {
+                if(foundUsers.get(i).isFake()) {
                     Label fake = new Label("Fake");
                     fake.setFont(new Font("Comic Sans MS", 14));
                     fake.setTextFill(Color.RED);
                     vBox.getChildren().addAll(name, age, city, fake);
-                } else if(users.get(i).getUsername().equals("mati")) {
+                } else if(foundUsers.get(i).getUsername().equals("mati")) {
                     Label fake = new Label("Admin");
                     fake.setFont(new Font("Comic Sans MS", 14));
                     fake.setTextFill(Color.BLUE);
@@ -919,12 +936,25 @@ public class MainPanelController {
                 box.getChildren().add(element);
                 int userId = box.getChildren().size() + pageIndex * ITEM_PER_PAGE - 1;
                 element.setOnMouseClicked(event -> {
-                    viewProfile(users.get(userId));
+                    viewProfile(foundUsers.get(userId).getUsername());
                 });
             }
 
         }
         return box;
+    }
+
+    @SuppressWarnings("Duplicates")
+    private User getUser(String username) throws Exception {
+        DefaultHttpClient client = new DefaultHttpClient();
+        Credentials credentials = new UsernamePasswordCredentials(user.getUsername(), password);
+        client.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
+        ApacheHttpClient4Executor executor = new ApacheHttpClient4Executor(client);
+
+        ClientRequest clientRequest = new ClientRequest(getUserUrl + "login=" + username, executor);
+        System.out.println(username);
+        User user = (User) clientRequest.post().getEntity(User.class);
+        return user;
     }
 
     @FXML
@@ -940,6 +970,134 @@ public class MainPanelController {
     }
 
 
+    /************ Intelligent Search *************/
+
+    @FXML
+    public void fit() {
+        ProgressIndicator indicator = new ProgressIndicator(-1);
+        resultVBoxAuto.getChildren().add(0, indicator);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DefaultHttpClient client = new DefaultHttpClient();
+                Credentials credentials = new UsernamePasswordCredentials(user.getUsername(), password);
+                client.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
+                ApacheHttpClient4Executor executor = new ApacheHttpClient4Executor(client);
+
+                ClientRequest clientRequest = new ClientRequest(getFitUsersUrl + "username=" + user.getUsername() + "&real=" + realOnly.isSelected(), executor);
+                try {
+                    classifiedUsers = new ArrayList<>((Set<ClassifiedUser>) clientRequest.get().getEntity(new GenericType<Set<ClassifiedUser>>() {
+                    }));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                Collections.sort(classifiedUsers, Comparator.comparingDouble(o -> (int) o.getFitPercentage()));
+                Collections.reverse(classifiedUsers);
+
+                Platform.runLater(
+                        () -> {
+                            paginationAuto.setVisible(true);
+                            int maxPage = (int) Math.ceil((double) classifiedUsers.size() / (double) ITEM_PER_PAGE);
+                            paginationAuto.setPageCount(maxPage);
+                            paginationAuto.setPageFactory((Integer pageIndex) -> createFitPage(pageIndex));
+                            resultVBoxAuto.getChildren().remove(indicator);
+                        }
+                );
+            }
+        }).start();
+    }
+
+    public VBox createFitPage(int pageIndex) {
+
+
+        VBox box = new VBox(5);
+
+        int page = pageIndex * ITEM_PER_PAGE;
+        for (int i = page; i < page + ITEM_PER_PAGE; i++) {
+
+            if(i < classifiedUsers.size()) {
+                HBox element = new HBox(10);
+                ImageView imageView;
+                if (classifiedUsers.get(i).getAvatar() != null) {
+                    imageView = new ImageView(new Image(new ByteArrayInputStream(classifiedUsers.get(i).getAvatar())));
+                    imageView.setFitWidth(160);
+                    imageView.setFitHeight(160);
+                } else {
+                    imageView = new ImageView("images/noFoto.png");
+                    imageView.setFitHeight(160);
+                    imageView.setFitWidth(160);
+                }
+
+                VBox vBox = new VBox(10);
+                vBox.setAlignment(Pos.CENTER_LEFT);
+                Label name = new Label("Imię: " + classifiedUsers.get(i).getName());
+                name.setFont(new Font("Comic Sans MS", 14));
+
+                LocalDate now = LocalDate.now();
+                LocalDate birth = classifiedUsers.get(i).getDateOfBirth().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                Period period = Period.between(birth, now);
+
+                City userCity = classifiedUsers.get(i).getCity();
+                String cityData = userCity.getName() + ", Woj. " + userCity.getVoivodeship() + ", Pow. " + userCity.getCountry() + ", Gmina " + userCity.getCommunity();
+                Label city = new Label("Lokalizacja: " + cityData);
+                city.setFont(new Font("Comic Sans MS", 14));
+
+                Label age = new Label("Wiek: " + String.valueOf(period.getYears()));
+                age.setFont(new Font("Comic Sans MS", 14));
+
+                HBox fit = new HBox(15);
+                fit.setAlignment(Pos.CENTER_LEFT);
+
+                Label fitLabel = new Label("Pasujecie do siebie w ");
+                fitLabel.setFont(new Font("Comic Sans MS", 14));
+
+                Label fitPercentage = new Label(classifiedUsers.get(i).getFitPercentage() + "%");
+                fitPercentage.setFont(new Font("Comic Sans MS", 18));
+
+
+                ProgressBar progressPercentage = new ProgressBar();
+                float val = classifiedUsers.get(i).getFitPercentage() / 100;
+                progressPercentage.setProgress(val);
+
+                if (val <= 0.2)
+                    fitPercentage.setTextFill(Paint.valueOf("#ff0000"));
+                if (val > 0.2 && val <= 0.4)
+                    fitPercentage.setTextFill(Paint.valueOf("#b8c920 "));
+                if(val > 0.4 && val <= 0.6)
+                    fitPercentage.setTextFill(Paint.valueOf("#ffd100"));
+                if(val > 0.6 && val <= 0.8)
+                    fitPercentage.setTextFill(Paint.valueOf("#edff00"));
+                if(val > 0.8)
+                    fitPercentage.setTextFill(Paint.valueOf("#37d119"));
+
+                fit.getChildren().addAll(fitLabel, fitPercentage, progressPercentage);
+
+                if(classifiedUsers.get(i).isFake()) {
+                    Label fake = new Label("Fake");
+                    fake.setTextFill(Color.RED);
+                    fake.setFont(new Font("Comic Sans MS", 14));
+                    vBox.getChildren().addAll(name, age, city, fit, fake);
+                } else if(classifiedUsers.get(i).getUsername().equals("mati")) {
+                    Label fake = new Label("Admin");
+                    fake.setTextFill(Color.BLUE);
+                    fake.setFont(new Font("Comic Sans MS", 14));
+                    vBox.getChildren().addAll(name, age, city, fit, fake);
+                } else
+                    vBox.getChildren().addAll(name, age, city, fit);
+
+                element.getChildren().addAll(imageView, vBox);
+                box.getChildren().add(element);
+                int userId = box.getChildren().size() + pageIndex * ITEM_PER_PAGE - 1;
+                element.setOnMouseClicked(event -> {
+                    viewProfile(classifiedUsers.get(userId).getUsername());
+                });
+            }
+
+        }
+        return box;
+    }
 
     public void setMainPanel(AnchorPane mainPanel) {
         this.mainPanel = mainPanel;
