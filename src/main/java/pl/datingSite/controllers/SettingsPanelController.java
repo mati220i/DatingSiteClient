@@ -17,6 +17,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.log4j.Logger;
 import org.controlsfx.control.CheckComboBox;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
@@ -79,6 +80,8 @@ public class SettingsPanelController {
     private PasswordField presentPassword, newPassword, passPassword;
 
 
+    static final Logger logger = Logger.getLogger(SettingsPanelController.class);
+
     private final String applicationTestUrl = "http://localhost:8090/test";
     private final String countNotificationUrl = "http://localhost:8090/notification/count?";
     private final String updateUserUrl = "http://localhost:8090/user/updateUser";
@@ -99,6 +102,7 @@ public class SettingsPanelController {
             alert.setTitle("Dating Site");
             ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
             alert.setContentText("Brak połączenia z serwerem!");
+            logger.error("Brak połączenia z serwerem");
 
             Optional<ButtonType> result = alert.showAndWait();
             if((result.get() == ButtonType.OK)){
@@ -628,6 +632,7 @@ public class SettingsPanelController {
     @FXML
     public void add() {
         String interest = typeInterests.getText();
+        interest = interest.substring(0, 1).toUpperCase() + interest.substring(1).toLowerCase();
         interests.getItems().add(interest);
         typeInterests.clear();
     }

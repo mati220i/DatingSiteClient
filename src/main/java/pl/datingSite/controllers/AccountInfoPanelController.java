@@ -17,6 +17,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.log4j.Logger;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
@@ -68,6 +69,8 @@ public class AccountInfoPanelController {
     private HBox buttons;
 
 
+    static final Logger logger = Logger.getLogger(AccountInfoPanelController.class);
+
     private final String applicationTestUrl = "http://localhost:8090/test";
     private final String countNotificationUrl = "http://localhost:8090/notification/count?";
     private final String newWaveNotificationUrl = "http://localhost:8090/notification/newWave?";
@@ -88,6 +91,7 @@ public class AccountInfoPanelController {
             alert.setTitle("Dating Site");
             alert.setHeaderText(null);
             alert.setContentText("Brak połączenia z serwerem!");
+            logger.error("Brak połączenia z serwerem!");
 
             Optional<ButtonType> result = alert.showAndWait();
             if((result.get() == ButtonType.OK)){

@@ -17,6 +17,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.log4j.Logger;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.jboss.resteasy.util.GenericType;
@@ -61,12 +62,15 @@ public class NotificationPanelController {
     @FXML
     private Separator line, line2;
 
+
+    static final Logger logger = Logger.getLogger(NotificationPanelController.class);
+
     private final String applicationTestUrl = "http://localhost:8090/test";
     private final String countNotificationUrl = "http://localhost:8090/notification/count?";
     private final String getNotificationsUrl = "http://localhost:8090/notification/getAll?";
     private final String readNotificationsUrl = "http://localhost:8090/notification/read?";
     private final String deleteNotificationsUrl = "http://localhost:8090/notification/delete";
-    private final String getUserUrl = "http://localhost:8090/user/getUser?";
+    private final String getUserUrl = "http://localhost:8090/user/getUserWithAllData?";
     private final String countInvitationsUrl = "http://localhost:8090/friends/count?";
     private final String getConversationUrl = "http://localhost:8090/messages/getConversation?";
 
@@ -82,6 +86,7 @@ public class NotificationPanelController {
             alert.setHeaderText(null);
             alert.setContentText("Brak połączenia z serwerem!");
             alert.setTitle("Dating Site");
+            logger.error("Brak połączenia z serwerem");
 
             Optional<ButtonType> result = alert.showAndWait();
             if((result.get() == ButtonType.OK)){

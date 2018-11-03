@@ -22,6 +22,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.log4j.Logger;
 import org.controlsfx.control.CheckComboBox;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
@@ -116,6 +117,7 @@ public class MainPanelController {
     private final int ITEM_PER_PAGE = 6;
     private List<City> foundedCitiesSearch;
     private List<FoundUser> foundUsers;
+    private VBox box;
 
     /************ Intelligent Search *************/
     @FXML
@@ -125,8 +127,10 @@ public class MainPanelController {
     @FXML
     private Pagination paginationAuto;
     private List<ClassifiedUser> classifiedUsers;
+    private VBox fitBox;
 
 
+    static final Logger logger = Logger.getLogger(MainPanelController.class);
 
     private final String applicationTestUrl = "http://localhost:8090/test";
     private final String countNotificationUrl = "http://localhost:8090/notification/count?";
@@ -137,7 +141,7 @@ public class MainPanelController {
     private final String countInvitationsUrl = "http://localhost:8090/friends/count?";
     private final String getRoleUrl = "http://localhost:8090/user/getRole?";
     private final String getConversationUrl = "http://localhost:8090/messages/getConversation?";
-    private final String getUserUrl = "http://localhost:8090/user/getUser?";
+    private final String getUserUrl = "http://localhost:8090/user/getUserWithAllData?";
     private final String getFitUsersUrl = "http://localhost:8090/user/getFitUsers?";
 
     @FXML
@@ -145,94 +149,106 @@ public class MainPanelController {
         try {
             ClientRequest clientRequest = new ClientRequest(applicationTestUrl);
             clientRequest.get();
+
+
+            woman.setToggleGroup(toggleGroup);
+            man.setToggleGroup(toggleGroup);
+            prev.setDisable(true);
+
+            quantityError.setVisible(false);
+            cityError.setVisible(false);
+            cityError2.setVisible(false);
+            generateLabel.setVisible(false);
+            generateLabel2.setVisible(false);
+            city.setDisable(true);
+            pagination.setVisible(false);
+            paginationAuto.setVisible(false);
+
+            distanceCalc.setDisable(true);
+            dataEditor.setDisable(true);
+            databaseGen.setDisable(true);
         } catch (ConnectException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Dating Site");
             alert.setHeaderText(null);
             ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
             alert.setContentText("Brak połączenia z serwerem!");
+            logger.error("Brak połączenia z serwerem");
 
             Optional<ButtonType> result = alert.showAndWait();
             if((result.get() == ButtonType.OK)){
                 System.exit(0);
             }
         }
-
-        woman.setToggleGroup(toggleGroup);
-        man.setToggleGroup(toggleGroup);
-        prev.setDisable(true);
-
-        quantityError.setVisible(false);
-        cityError.setVisible(false);
-        cityError2.setVisible(false);
-        generateLabel.setVisible(false);
-        generateLabel2.setVisible(false);
-        city.setDisable(true);
-        pagination.setVisible(false);
-        paginationAuto.setVisible(false);
-
-        distanceCalc.setDisable(true);
-        dataEditor.setDisable(true);
-        databaseGen.setDisable(true);
     }
 
-    public void refresh() throws Exception {
-        Random generator = new Random();
-        int val = generator.nextInt(16) + 1;
-        String path = "images/background/background" + val + ".jpg";
-        mainPanel.setStyle("-fx-background-image: url('" + path + "'); -fx-background-size: 1200 720; -fx-background-size: cover");
+    public void refresh() {
+        try {
+            Random generator = new Random();
+            int val = generator.nextInt(16) + 1;
+            String path = "images/background/background" + val + ".jpg";
+            mainPanel.setStyle("-fx-background-image: url('" + path + "'); -fx-background-size: 1200 720; -fx-background-size: cover");
 
-        nameAndSurname.setText(user.getName() + " " + user.getSurname());
+            nameAndSurname.setText(user.getName() + " " + user.getSurname());
 
-        if(user.getAvatar() != null)
-            avatar.setImage(new Image(new ByteArrayInputStream(user.getAvatar())));
-        else
-            avatar.setImage(new Image("images/noFoto.png"));
+            if (user.getAvatar() != null)
+                avatar.setImage(new Image(new ByteArrayInputStream(user.getAvatar())));
+            else
+                avatar.setImage(new Image("images/noFoto.png"));
 
-        DefaultHttpClient client = new DefaultHttpClient();
-        Credentials credentials = new UsernamePasswordCredentials(user.getUsername(), password);
-        client.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
-        ApacheHttpClient4Executor executor = new ApacheHttpClient4Executor(client);
+            DefaultHttpClient client = new DefaultHttpClient();
+            Credentials credentials = new UsernamePasswordCredentials(user.getUsername(), password);
+            client.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
+            ApacheHttpClient4Executor executor = new ApacheHttpClient4Executor(client);
 
-        ClientRequest clientRequest = new ClientRequest(countNotificationUrl + "username=" + user.getUsername(), executor);
-        Integer notificationQuantity = (Integer)clientRequest.get().getEntity(Integer.class);
-        notificationCount.setText(notificationQuantity.toString());
+            ClientRequest clientRequest = new ClientRequest(countNotificationUrl + "username=" + user.getUsername(), executor);
+            Integer notificationQuantity = (Integer) clientRequest.get().getEntity(Integer.class);
+            notificationCount.setText(notificationQuantity.toString());
 
-        clientRequest = new ClientRequest(countInvitationsUrl + "username=" + user.getUsername(), executor);
-        Integer invitationQuantity = (Integer)clientRequest.get().getEntity(Integer.class);
-        friendsCount.setText(invitationQuantity.toString());
+            clientRequest = new ClientRequest(countInvitationsUrl + "username=" + user.getUsername(), executor);
+            Integer invitationQuantity = (Integer) clientRequest.get().getEntity(Integer.class);
+            friendsCount.setText(invitationQuantity.toString());
 
-        clientRequest = new ClientRequest(getRoleUrl + "username=" + user.getUsername(), executor);
-        roles = (List<Roles>) clientRequest.get().getEntity(new GenericType<List<Roles>>() {});
+            clientRequest = new ClientRequest(getRoleUrl + "username=" + user.getUsername(), executor);
+            roles = (List<Roles>) clientRequest.get().getEntity(new GenericType<List<Roles>>() {
+            });
 
-        if(roles.stream().filter(r -> r.getRole().equals("ADMIN")).count() > 0) {
-            distanceCalc.setDisable(false);
-            dataEditor.setDisable(false);
-            databaseGen.setDisable(false);
+            if (roles.stream().filter(r -> r.getRole().equals("ADMIN")).count() > 0) {
+                distanceCalc.setDisable(false);
+                dataEditor.setDisable(false);
+                databaseGen.setDisable(false);
+            }
+
+            friendsCount.setText(invitationQuantity.toString());
+
+
+            if (friendsCount.getText().equals("0"))
+                friendsCounter.setVisible(false);
+            if (notificationCount.getText().equals("0"))
+                notificationsCounter.setVisible(false);
+
+            setSearchData();
+            setConversations();
+        } catch (Exception e) {
+            logger.error(e.getMessage());
         }
-
-        friendsCount.setText(invitationQuantity.toString());
-
-
-        if(friendsCount.getText().equals("0"))
-            friendsCounter.setVisible(false);
-        if(notificationCount.getText().equals("0"))
-            notificationsCounter.setVisible(false);
-
-        setSearchData();
-        setConversations();
     }
 
     @SuppressWarnings("Duplicates")
-    private void setConversations() throws Exception {
-        DefaultHttpClient client = new DefaultHttpClient();
-        Credentials credentials = new UsernamePasswordCredentials(user.getUsername(), password);
-        client.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
-        ApacheHttpClient4Executor executor = new ApacheHttpClient4Executor(client);
+    private void setConversations() {
+        try {
+            DefaultHttpClient client = new DefaultHttpClient();
+            Credentials credentials = new UsernamePasswordCredentials(user.getUsername(), password);
+            client.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
+            ApacheHttpClient4Executor executor = new ApacheHttpClient4Executor(client);
 
-        ClientRequest clientRequest = new ClientRequest(getConversationUrl + "username=" + user.getUsername(), executor);
-        this.conversations = (Set<Conversation>)clientRequest.get().getEntity(new GenericType<Set<Conversation>>() {});
-        checkUnreaded(conversations);
+            ClientRequest clientRequest = new ClientRequest(getConversationUrl + "username=" + user.getUsername(), executor);
+            this.conversations = (Set<Conversation>) clientRequest.get().getEntity(new GenericType<Set<Conversation>>() {
+            });
+            checkUnreaded(conversations);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
     }
 
     @SuppressWarnings("Duplicates")
@@ -882,7 +898,10 @@ public class MainPanelController {
     public VBox createPage(int pageIndex) {
 
 
-        VBox box = new VBox(5);
+        if(box != null)
+            box.getChildren().removeAll();
+        box = null;
+        box = new VBox(5);
 
         int page = pageIndex * ITEM_PER_PAGE;
         for (int i = page; i < page + ITEM_PER_PAGE; i++) {
@@ -952,7 +971,6 @@ public class MainPanelController {
         ApacheHttpClient4Executor executor = new ApacheHttpClient4Executor(client);
 
         ClientRequest clientRequest = new ClientRequest(getUserUrl + "login=" + username, executor);
-        System.out.println(username);
         User user = (User) clientRequest.post().getEntity(User.class);
         return user;
     }
@@ -999,6 +1017,7 @@ public class MainPanelController {
                 Platform.runLater(
                         () -> {
                             paginationAuto.setVisible(true);
+                            paginationAuto.setPageFactory(null);
                             int maxPage = (int) Math.ceil((double) classifiedUsers.size() / (double) ITEM_PER_PAGE);
                             paginationAuto.setPageCount(maxPage);
                             paginationAuto.setPageFactory((Integer pageIndex) -> createFitPage(pageIndex));
@@ -1010,9 +1029,10 @@ public class MainPanelController {
     }
 
     public VBox createFitPage(int pageIndex) {
-
-
-        VBox box = new VBox(5);
+//        if(fitBox != null)
+//            fitBox.getChildren().removeAll();
+//        fitBox = null;
+        fitBox = new VBox(5);
 
         int page = pageIndex * ITEM_PER_PAGE;
         for (int i = page; i < page + ITEM_PER_PAGE; i++) {
@@ -1064,11 +1084,11 @@ public class MainPanelController {
                 if (val <= 0.2)
                     fitPercentage.setTextFill(Paint.valueOf("#ff0000"));
                 if (val > 0.2 && val <= 0.4)
-                    fitPercentage.setTextFill(Paint.valueOf("#b8c920 "));
+                    fitPercentage.setTextFill(Paint.valueOf("#b8c920"));
                 if(val > 0.4 && val <= 0.6)
                     fitPercentage.setTextFill(Paint.valueOf("#ffd100"));
                 if(val > 0.6 && val <= 0.8)
-                    fitPercentage.setTextFill(Paint.valueOf("#edff00"));
+                    fitPercentage.setTextFill(Paint.valueOf("#83c40d"));
                 if(val > 0.8)
                     fitPercentage.setTextFill(Paint.valueOf("#37d119"));
 
@@ -1088,15 +1108,15 @@ public class MainPanelController {
                     vBox.getChildren().addAll(name, age, city, fit);
 
                 element.getChildren().addAll(imageView, vBox);
-                box.getChildren().add(element);
-                int userId = box.getChildren().size() + pageIndex * ITEM_PER_PAGE - 1;
+                fitBox.getChildren().add(element);
+                int userId = fitBox.getChildren().size() + pageIndex * ITEM_PER_PAGE - 1;
                 element.setOnMouseClicked(event -> {
                     viewProfile(classifiedUsers.get(userId).getUsername());
                 });
             }
 
         }
-        return box;
+        return fitBox;
     }
 
     public void setMainPanel(AnchorPane mainPanel) {

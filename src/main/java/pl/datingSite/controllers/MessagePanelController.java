@@ -17,6 +17,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.log4j.Logger;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
@@ -69,11 +70,13 @@ public class MessagePanelController {
     private ScrollPane scrollPane;
 
 
+    static final Logger logger = Logger.getLogger(MessagePanelController.class);
+
     private final String applicationTestUrl = "http://localhost:8090/test";
     private final String countNotificationUrl = "http://localhost:8090/notification/count?";
     private final String getConversationUrl = "http://localhost:8090/messages/getConversation?";
     private final String newMessageUrl = "http://localhost:8090/messages/newMessage";
-    private final String getUserUrl = "http://localhost:8090/user/getUser?";
+    private final String getUserUrl = "http://localhost:8090/user/getUserWithAllData?";
     private final String readConversationUrl = "http://localhost:8090/messages/readConversation?";
 
 
@@ -88,6 +91,7 @@ public class MessagePanelController {
             ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
             alert.setTitle("Dating Site");
             alert.setContentText("Brak połączenia z serwerem!");
+            logger.error("Brak połączenia z serwerem");
 
             Optional<ButtonType> result = alert.showAndWait();
             if((result.get() == ButtonType.OK)){

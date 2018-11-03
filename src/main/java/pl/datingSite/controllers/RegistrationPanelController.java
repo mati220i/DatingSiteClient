@@ -9,6 +9,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
+import org.apache.log4j.Logger;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.util.GenericType;
 import pl.datingSite.tools.EmailValidator;
@@ -50,6 +51,8 @@ public class RegistrationPanelController {
     private int choosedCity;
 
 
+    static final Logger logger = Logger.getLogger(RegistrationPanelController.class);
+
     private final String applicationTestUrl = "http://localhost:8090/test";
     private final String checkLoginUrl = "http://localhost:8090/user/registration/checkLogin/";
     private final String checkEmailUrl = "http://localhost:8090/user/registration/checkEmail/";
@@ -70,6 +73,7 @@ public class RegistrationPanelController {
             ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
             alert.setContentText("Brak połączenia z serwerem!");
             alert.setTitle("Dating Site");
+            logger.error("Brak połączenia z serwerem");
 
             Optional<ButtonType> result = alert.showAndWait();
             if((result.get() == ButtonType.OK)){

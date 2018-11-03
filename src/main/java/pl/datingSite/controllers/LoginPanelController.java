@@ -10,6 +10,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.log4j.Logger;
 import org.jboss.resteasy.client.ClientRequest;
 
 import org.jboss.resteasy.client.ClientResponse;
@@ -36,6 +37,8 @@ public class LoginPanelController {
     @FXML
     private VBox loginBox;
 
+    static final Logger logger = Logger.getLogger(LoginPanelController.class);
+
     private final String applicationTestUrl = "http://localhost:8090/test";
     private final String getUserUrl = "http://localhost:8090/user/getUser?";
 
@@ -43,7 +46,7 @@ public class LoginPanelController {
     private final String getCityByNameUrl = "http://localhost:8090/city/getByName?";
 
     @FXML
-    public void initialize() throws Exception {
+    public void initialize() {
         errorLabel.setVisible(false);
 
         try {
@@ -55,11 +58,14 @@ public class LoginPanelController {
             ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("images/logoMini.png"));
             alert.setHeaderText(null);
             alert.setContentText("Brak połączenia z serwerem!");
+            logger.error("Brak połączenia z serwerem");
 
             Optional<ButtonType> result = alert.showAndWait();
             if((result.get() == ButtonType.OK)){
                 System.exit(0);
             }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
         }
     }
 
@@ -71,42 +77,46 @@ public class LoginPanelController {
     }
 
     @FXML
-    public void login() throws Exception {
-        DefaultHttpClient client = new DefaultHttpClient();
-        Credentials credentials = new UsernamePasswordCredentials(login.getText(), password.getText());
-        client.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
-        ApacheHttpClient4Executor executor = new ApacheHttpClient4Executor(client);
+    public void login() {
+        try {
+            DefaultHttpClient client = new DefaultHttpClient();
+            Credentials credentials = new UsernamePasswordCredentials(login.getText(), password.getText());
+            client.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
+            ApacheHttpClient4Executor executor = new ApacheHttpClient4Executor(client);
 
-        ClientRequest clientRequest = new ClientRequest(getUserUrl + "login=" + login.getText(), executor);
-        ClientResponse response = clientRequest.post();
+            ClientRequest clientRequest = new ClientRequest(getUserUrl + "login=" + login.getText(), executor);
+            ClientResponse response = clientRequest.post();
 
 
-        if(response.getStatus() == 401)
-            errorLabel.setVisible(true);
-        else if(response.getStatus() == 404)
-            errorLabel.setVisible(true);
-        else {
-            User user = (User) response.getEntity(User.class);
+            if (response.getStatus() == 401)
+                errorLabel.setVisible(true);
+            else if (response.getStatus() == 404)
+                errorLabel.setVisible(true);
+            else {
+                User user = (User) response.getEntity(User.class);
 
-            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("MainPanel.fxml"));
-            AnchorPane pane = null;
-            try {
-                pane = loader.load();
-            } catch (IOException e) {
-                e.printStackTrace();
+                FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("MainPanel.fxml"));
+                AnchorPane pane = null;
+                try {
+                    pane = loader.load();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                MainPanelController mainPanelController = loader.getController();
+                mainPanelController.setUser(user);
+                mainPanelController.setMainPanel(pane);
+                mainPanelController.setLoginPanel(loginPane);
+                mainPanelController.setEmptyPanelController(emptyPanelController);
+                mainPanelController.setLoginPanelController(this);
+                mainPanelController.setPassword(password.getText());
+                mainPanelController.setStage(stage);
+                mainPanelController.refresh();
+
+                emptyPanelController.setScreen(pane);
             }
-
-            MainPanelController mainPanelController = loader.getController();
-            mainPanelController.setUser(user);
-            mainPanelController.setMainPanel(pane);
-            mainPanelController.setLoginPanel(loginPane);
-            mainPanelController.setEmptyPanelController(emptyPanelController);
-            mainPanelController.setLoginPanelController(this);
-            mainPanelController.setPassword(password.getText());
-            mainPanelController.setStage(stage);
-            mainPanelController.refresh();
-
-            emptyPanelController.setScreen(pane);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
         }
     }
 

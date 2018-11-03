@@ -8,10 +8,19 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import pl.datingSite.controllers.EmptyPanelController;
 
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        /**  Turn on the production version **/
+//        PrintStream out = new PrintStream(new FileOutputStream("output.txt"));
+//        PrintStream errOut = new PrintStream(new FileOutputStream("errorOutput.txt"));
+//        System.setOut(out);
+//        System.setErr(errOut);
+
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("EmptyPanel.fxml"));
         AnchorPane pane = loader.load();
 
