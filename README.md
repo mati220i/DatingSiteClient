@@ -1,7 +1,7 @@
 # DatingSiteClient
 
 # [PL]
-Aplikacja będąca celem wykonania pracy inżynierskiej, w której należało wykonać algorytm automatycznego kojarzeia par. W aplikacji zostało przygotowane kila funkcji głównych oraz pobocznych. Z dostępnych funkcjonalności udsostępniony jest panel logowania, rejestracji, główny z podziałem na sekcje dla użytkowników i administratora, panel ustawień, powiadomień, znajomych, skrzynka z wiadomościami, panel wyświetlania profilu użytkownika. Aplikacja została napisana przy użyciu języka Java i biblioteki graficznej JavaFX. Do przechowywania danych została użyta baza danych Oracle.
+Aplikacja będąca celem wykonania pracy inżynierskiej, w której należało wykonać algorytm automatycznego kojarzenia par. W aplikacji zostało przygotowane kila funkcji głównych oraz pobocznych. Z dostępnych funkcjonalności udostępniony jest panel logowania, rejestracji, główny z podziałem na sekcje dla użytkowników i administratora, panel ustawień, powiadomień, znajomych, skrzynka z wiadomościami, panel wyświetlania profilu użytkownika. Aplikacja została napisana przy użyciu języka Java i biblioteki graficznej JavaFX. Do przechowywania danych została użyta baza danych Oracle.
 
 # [EN]
 The application which is the aim of the engineering work in which the automatic pairing algorithm was to be performed. In the application, several main and side functions have been prepared. The available functionalities include the login and registration panel, the main one divided into sections for users and administrators, the settings panel, notifications, friends, the message box, the user profile display panel. The application was written using Java and the JavaFX graphic library. The Oracle database was used for data storage.
