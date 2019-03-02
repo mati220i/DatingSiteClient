@@ -356,7 +356,7 @@ public class RegistrationPanelController {
     private void sendEmailWithCode(ActivationCode activationCode) {
 
         final String username = "datingsite@wp.pl";
-        final String password = "datingsite3";
+        final String password = "xxxxxxxxxxxxxxxx";
 
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.wp.pl");
