@@ -8,7 +8,7 @@ The application which is the aim of the engineering work in which the automatic 
 
 ## Screens
 
-![My image](screens/loginPanel.jpg)
+![My image](Screens/loginPanel.jpg)
 <br/>
 *Okno panelu logowania*
 <br/>
